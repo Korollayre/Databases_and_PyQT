@@ -1459,3 +1459,117 @@
 2021-11-16 12:05:43,518 INFO       decos Произошел вызов функции creat_user_message со следующими параметрами - (<socket.socket fd=340, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58137), raddr=('127.0.0.1', 7777)>, 'test1'), {}. Вызов произошел из функции self._bootstrap_inner() модуля decos.py
 2021-11-16 12:05:44,424 INFO       decos Произошел вызов функции get_message со следующими параметрами - (<socket.socket fd=456, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58139), raddr=('127.0.0.1', 7777)>,), {}. Вызов произошел из функции self._bootstrap_inner() модуля decos.py
 2021-11-16 12:05:44,424 INFO       client Получено сообщение Hi, how are u? от пользователя test1
+2021-11-22 11:42:25,966 INFO       decos Произошел вызов функции arg_parser со следующими параметрами - (), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:25,966 INFO       client Запущен клиент со следующими параметрами: адрес - 127.0.0.1, порт - 7777, имя - test4
+2021-11-22 11:42:25,968 INFO       decos Произошел вызов функции arg_parser со следующими параметрами - (), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:25,968 INFO       client Запущен клиент со следующими параметрами: адрес - 127.0.0.1, порт - 7777, имя - test3
+2021-11-22 11:42:25,969 INFO       decos Произошел вызов функции arg_parser со следующими параметрами - (), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:25,969 INFO       client Запущен клиент со следующими параметрами: адрес - 127.0.0.1, порт - 7777, имя - test1
+2021-11-22 11:42:25,972 INFO       decos Произошел вызов функции arg_parser со следующими параметрами - (), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:25,972 INFO       client Запущен клиент со следующими параметрами: адрес - 127.0.0.1, порт - 7777, имя - test2
+2021-11-22 11:42:25,974 INFO       client Генерация запроса presence пользователя test2
+2021-11-22 11:42:25,975 INFO       decos Произошел вызов функции user_request со следующими параметрами - ('test2',), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:25,975 INFO       decos Произошел вызов функции send_message со следующими параметрами - (<socket.socket fd=352, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58337), raddr=('127.0.0.1', 7777)>, {'action': 'presence', 'time': 1637570545.9749568, 'user': {'account_name': 'test2'}}), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:25,990 INFO       decos Произошел вызов функции get_message со следующими параметрами - (<socket.socket fd=352, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58337), raddr=('127.0.0.1', 7777)>,), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:25,990 INFO       client Принят ответ сервера
+2021-11-22 11:42:25,990 INFO       decos Произошел вызов функции server_response со следующими параметрами - ({'response': 200},), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:25,990 INFO       client Ответ сервера принят: 200 : OK
+2021-11-22 11:42:26,481 INFO       client Генерация запроса presence пользователя test4
+2021-11-22 11:42:26,481 INFO       client Генерация запроса presence пользователя test3
+2021-11-22 11:42:26,482 INFO       decos Произошел вызов функции user_request со следующими параметрами - ('test4',), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:26,482 INFO       decos Произошел вызов функции user_request со следующими параметрами - ('test3',), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:26,482 INFO       decos Произошел вызов функции send_message со следующими параметрами - (<socket.socket fd=488, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58334), raddr=('127.0.0.1', 7777)>, {'action': 'presence', 'time': 1637570546.481861, 'user': {'account_name': 'test4'}}), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:26,482 INFO       decos Произошел вызов функции send_message со следующими параметрами - (<socket.socket fd=496, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58335), raddr=('127.0.0.1', 7777)>, {'action': 'presence', 'time': 1637570546.481861, 'user': {'account_name': 'test3'}}), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:26,493 INFO       decos Произошел вызов функции get_message со следующими параметрами - (<socket.socket fd=488, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58334), raddr=('127.0.0.1', 7777)>,), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:26,493 INFO       client Принят ответ сервера
+2021-11-22 11:42:26,494 INFO       decos Произошел вызов функции server_response со следующими параметрами - ({'response': 200},), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:26,494 INFO       client Ответ сервера принят: 200 : OK
+2021-11-22 11:42:26,521 INFO       decos Произошел вызов функции get_message со следующими параметрами - (<socket.socket fd=496, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58335), raddr=('127.0.0.1', 7777)>,), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:26,521 INFO       client Принят ответ сервера
+2021-11-22 11:42:26,522 INFO       decos Произошел вызов функции server_response со следующими параметрами - ({'response': 200},), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:26,522 INFO       client Ответ сервера принят: 200 : OK
+2021-11-22 11:42:26,975 INFO       client Генерация запроса presence пользователя test1
+2021-11-22 11:42:26,976 INFO       decos Произошел вызов функции user_request со следующими параметрами - ('test1',), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:26,978 INFO       decos Произошел вызов функции send_message со следующими параметрами - (<socket.socket fd=496, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58336), raddr=('127.0.0.1', 7777)>, {'action': 'presence', 'time': 1637570546.9750113, 'user': {'account_name': 'test1'}}), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:26,999 INFO       decos Произошел вызов функции get_message со следующими параметрами - (<socket.socket fd=496, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58336), raddr=('127.0.0.1', 7777)>,), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:26,999 INFO       client Принят ответ сервера
+2021-11-22 11:42:26,999 INFO       decos Произошел вызов функции server_response со следующими параметрами - ({'response': 200},), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:42:26,999 INFO       client Ответ сервера принят: 200 : OK
+2021-11-22 11:43:43,961 INFO       decos Произошел вызов функции arg_parser со следующими параметрами - (), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:43,961 INFO       client Запущен клиент со следующими параметрами: адрес - 127.0.0.1, порт - 7777, имя - test1
+2021-11-22 11:43:43,964 INFO       client Генерация запроса presence пользователя test1
+2021-11-22 11:43:43,965 INFO       decos Произошел вызов функции user_request со следующими параметрами - ('test1',), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:43,966 INFO       decos Произошел вызов функции send_message со следующими параметрами - (<socket.socket fd=492, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58377), raddr=('127.0.0.1', 7777)>, {'action': 'presence', 'time': 1637570623.9645705, 'user': {'account_name': 'test1'}}), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,002 INFO       decos Произошел вызов функции arg_parser со следующими параметрами - (), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,002 INFO       client Запущен клиент со следующими параметрами: адрес - 127.0.0.1, порт - 7777, имя - test2
+2021-11-22 11:43:44,005 INFO       client Генерация запроса presence пользователя test2
+2021-11-22 11:43:44,006 INFO       decos Произошел вызов функции user_request со следующими параметрами - ('test2',), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,008 INFO       decos Произошел вызов функции send_message со следующими параметрами - (<socket.socket fd=416, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58378), raddr=('127.0.0.1', 7777)>, {'action': 'presence', 'time': 1637570624.0055802, 'user': {'account_name': 'test2'}}), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,008 INFO       decos Произошел вызов функции get_message со следующими параметрами - (<socket.socket fd=492, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58377), raddr=('127.0.0.1', 7777)>,), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,008 INFO       client Принят ответ сервера
+2021-11-22 11:43:44,009 INFO       decos Произошел вызов функции server_response со следующими параметрами - ({'response': 200},), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,009 INFO       client Ответ сервера принят: 200 : OK
+2021-11-22 11:43:44,043 INFO       decos Произошел вызов функции arg_parser со следующими параметрами - (), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,043 INFO       client Запущен клиент со следующими параметрами: адрес - 127.0.0.1, порт - 7777, имя - test3
+2021-11-22 11:43:44,046 INFO       client Генерация запроса presence пользователя test3
+2021-11-22 11:43:44,047 INFO       decos Произошел вызов функции user_request со следующими параметрами - ('test3',), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,048 INFO       decos Произошел вызов функции send_message со следующими параметрами - (<socket.socket fd=476, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58379), raddr=('127.0.0.1', 7777)>, {'action': 'presence', 'time': 1637570624.0465896, 'user': {'account_name': 'test3'}}), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,049 INFO       decos Произошел вызов функции get_message со следующими параметрами - (<socket.socket fd=416, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58378), raddr=('127.0.0.1', 7777)>,), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,049 INFO       client Принят ответ сервера
+2021-11-22 11:43:44,050 INFO       decos Произошел вызов функции server_response со следующими параметрами - ({'response': 200},), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,050 INFO       client Ответ сервера принят: 200 : OK
+2021-11-22 11:43:44,081 INFO       decos Произошел вызов функции arg_parser со следующими параметрами - (), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,081 INFO       client Запущен клиент со следующими параметрами: адрес - 127.0.0.1, порт - 7777, имя - test4
+2021-11-22 11:43:44,084 INFO       client Генерация запроса presence пользователя test4
+2021-11-22 11:43:44,085 INFO       decos Произошел вызов функции user_request со следующими параметрами - ('test4',), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,086 INFO       decos Произошел вызов функции send_message со следующими параметрами - (<socket.socket fd=420, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58380), raddr=('127.0.0.1', 7777)>, {'action': 'presence', 'time': 1637570624.0845976, 'user': {'account_name': 'test4'}}), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,086 INFO       decos Произошел вызов функции get_message со следующими параметрами - (<socket.socket fd=476, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58379), raddr=('127.0.0.1', 7777)>,), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,086 INFO       client Принят ответ сервера
+2021-11-22 11:43:44,087 INFO       decos Произошел вызов функции server_response со следующими параметрами - ({'response': 200},), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:44,087 INFO       client Ответ сервера принят: 200 : OK
+2021-11-22 11:43:45,104 INFO       decos Произошел вызов функции get_message со следующими параметрами - (<socket.socket fd=420, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58380), raddr=('127.0.0.1', 7777)>,), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:45,104 INFO       client Принят ответ сервера
+2021-11-22 11:43:45,105 INFO       decos Произошел вызов функции server_response со следующими параметрами - ({'response': 200},), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:43:45,105 INFO       client Ответ сервера принят: 200 : OK
+2021-11-22 11:44:55,908 INFO       decos Произошел вызов функции arg_parser со следующими параметрами - (), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:55,908 INFO       client Запущен клиент со следующими параметрами: адрес - 127.0.0.1, порт - 7777, имя - test1
+2021-11-22 11:44:55,911 INFO       client Генерация запроса presence пользователя test1
+2021-11-22 11:44:55,912 INFO       decos Произошел вызов функции user_request со следующими параметрами - ('test1',), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:55,913 INFO       decos Произошел вызов функции send_message со следующими параметрами - (<socket.socket fd=156, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58389), raddr=('127.0.0.1', 7777)>, {'action': 'presence', 'time': 1637570695.911197, 'user': {'account_name': 'test1'}}), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:55,929 INFO       decos Произошел вызов функции arg_parser со следующими параметрами - (), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:55,930 INFO       client Запущен клиент со следующими параметрами: адрес - 127.0.0.1, порт - 7777, имя - test2
+2021-11-22 11:44:55,932 INFO       client Генерация запроса presence пользователя test2
+2021-11-22 11:44:55,933 INFO       decos Произошел вызов функции user_request со следующими параметрами - ('test2',), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:55,934 INFO       decos Произошел вызов функции send_message со следующими параметрами - (<socket.socket fd=448, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58390), raddr=('127.0.0.1', 7777)>, {'action': 'presence', 'time': 1637570695.932203, 'user': {'account_name': 'test2'}}), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:55,934 INFO       decos Произошел вызов функции get_message со следующими параметрами - (<socket.socket fd=156, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58389), raddr=('127.0.0.1', 7777)>,), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:55,934 INFO       client Принят ответ сервера
+2021-11-22 11:44:55,935 INFO       decos Произошел вызов функции server_response со следующими параметрами - ({'response': 200},), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:55,935 INFO       client Ответ сервера принят: 200 : OK
+2021-11-22 11:44:55,966 INFO       decos Произошел вызов функции arg_parser со следующими параметрами - (), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:55,966 INFO       client Запущен клиент со следующими параметрами: адрес - 127.0.0.1, порт - 7777, имя - test3
+2021-11-22 11:44:55,968 INFO       client Генерация запроса presence пользователя test3
+2021-11-22 11:44:55,969 INFO       decos Произошел вызов функции user_request со следующими параметрами - ('test3',), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:55,970 INFO       decos Произошел вызов функции send_message со следующими параметрами - (<socket.socket fd=480, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58391), raddr=('127.0.0.1', 7777)>, {'action': 'presence', 'time': 1637570695.9682102, 'user': {'account_name': 'test3'}}), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:55,970 INFO       decos Произошел вызов функции get_message со следующими параметрами - (<socket.socket fd=448, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58390), raddr=('127.0.0.1', 7777)>,), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:55,970 INFO       client Принят ответ сервера
+2021-11-22 11:44:55,971 INFO       decos Произошел вызов функции server_response со следующими параметрами - ({'response': 200},), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:55,971 INFO       client Ответ сервера принят: 200 : OK
+2021-11-22 11:44:56,014 INFO       decos Произошел вызов функции arg_parser со следующими параметрами - (), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:56,014 INFO       client Запущен клиент со следующими параметрами: адрес - 127.0.0.1, порт - 7777, имя - test4
+2021-11-22 11:44:56,017 INFO       client Генерация запроса presence пользователя test4
+2021-11-22 11:44:56,018 INFO       decos Произошел вызов функции user_request со следующими параметрами - ('test4',), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:56,019 INFO       decos Произошел вызов функции send_message со следующими параметрами - (<socket.socket fd=488, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58392), raddr=('127.0.0.1', 7777)>, {'action': 'presence', 'time': 1637570696.017222, 'user': {'account_name': 'test4'}}), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:56,020 INFO       decos Произошел вызов функции get_message со следующими параметрами - (<socket.socket fd=480, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58391), raddr=('127.0.0.1', 7777)>,), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:56,020 INFO       client Принят ответ сервера
+2021-11-22 11:44:56,021 INFO       decos Произошел вызов функции server_response со следующими параметрами - ({'response': 200},), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:56,021 INFO       client Ответ сервера принят: 200 : OK
+2021-11-22 11:44:57,031 INFO       decos Произошел вызов функции get_message со следующими параметрами - (<socket.socket fd=488, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58392), raddr=('127.0.0.1', 7777)>,), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:57,031 INFO       client Принят ответ сервера
+2021-11-22 11:44:57,032 INFO       decos Произошел вызов функции server_response со следующими параметрами - ({'response': 200},), {}. Вызов произошел из функции main() модуля decos.py
+2021-11-22 11:44:57,032 INFO       client Ответ сервера принят: 200 : OK
+2021-11-22 11:45:27,473 INFO       client Сформировано сообщение {'action': 'message', 'sender': 'test1', 'destination': 'test3', 'time': 1637570727.4731376, 'mess_text': 'hi'}.
+2021-11-22 11:45:27,483 INFO       decos Произошел вызов функции send_message со следующими параметрами - (<socket.socket fd=156, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58389), raddr=('127.0.0.1', 7777)>, {'action': 'message', 'sender': 'test1', 'destination': 'test3', 'time': 1637570727.4731376, 'mess_text': 'hi'}), {}. Вызов произошел из функции self._bootstrap_inner() модуля decos.py
+2021-11-22 11:45:27,483 INFO       client Сообщение {'action': 'message', 'sender': 'test1', 'destination': 'test3', 'time': 1637570727.4731376, 'mess_text': 'hi'} пользователю test3 отправлено.
+2021-11-22 11:45:27,484 INFO       decos Произошел вызов функции creat_user_message со следующими параметрами - (<ClientSender(Thread-2, started daemon 1164)>,), {}. Вызов произошел из функции self._bootstrap_inner() модуля decos.py
+2021-11-22 11:45:28,324 INFO       decos Произошел вызов функции get_message со следующими параметрами - (<socket.socket fd=480, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('127.0.0.1', 58391), raddr=('127.0.0.1', 7777)>,), {}. Вызов произошел из функции self._bootstrap_inner() модуля decos.py
+2021-11-22 11:45:28,324 INFO       client Получено сообщение hi от пользователя test1
