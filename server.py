@@ -10,11 +10,12 @@ from common.variables import *
 from common.utils import get_message, send_message
 from decos import Log
 from descriptors import PortVerifier
+from metaclasses import ServerVerifier
 
 SERVER_LOGGER = logging.getLogger('server')
 
 
-class Server:
+class Server(metaclass=ServerVerifier):
     listen_port = PortVerifier()
 
     def __init__(self, listen_address, listen_port):
@@ -79,7 +80,6 @@ class Server:
                     del self.names[message[DESTINATION]]
             self.messages_list.clear()
 
-    @Log()
     def process_user_message(self, message, user):
         """
         Обработчик сообщений от клиентов, принимает словарь -
@@ -122,7 +122,6 @@ class Server:
                 ERROR: 'Bad Request'})
             return
 
-    @Log()
     def process_message(self, message, listen_address):
         """
         Функция адресной отправки сообщения определённому клиенту. Принимает словарь сообщение,

@@ -8,21 +8,28 @@ import time
 import logging
 import argparse
 
-from common.variables import ACTION, PRESENCE, TIME, USER, ACCOUNT_NAME, \
-    RESPONSE, ERROR, DEFAULT_IP_ADDRESS, DEFAULT_PORT, SENDER, MESSAGE, MESSAGE_TEXT, EXIT, DESTINATION
+from common.variables import *
 from common.utils import get_message, send_message
 from errors import ReqFieldMissingError, ServerError, IncorrectDataRecivedError
 from decos import Log
+from metaclasses import ClientVerifier
 
 CLIENT_LOGGER = logging.getLogger('client')
 
 
-class ClientSender(threading.Thread):
+class ClientSender(threading.Thread, metaclass=ClientVerifier):
 
     def __init__(self, sock, account_name):
-        super(ClientSender, self).__init__()
         self.sock = sock
         self.account_name = account_name
+        super().__init__()
+
+    def create_exit_message(self):
+        return {
+            ACTION: EXIT,
+            TIME: time.time(),
+            DESTINATION: self.account_name
+        }
 
     def help_messages(self):
         print("Поддерживаемые команды: \n"
@@ -30,7 +37,6 @@ class ClientSender(threading.Thread):
               "'help' - вызов справки.\n"
               "'exit' - завершение работы программы.")
 
-    @Log()
     def creat_user_message(self):
         receiver = input('Введите имя получателя: ')
         message = input('Введите сообщение: ')
@@ -49,15 +55,6 @@ class ClientSender(threading.Thread):
             CLIENT_LOGGER.critical(f'Потеряно соединение с сервером.')
             sys.exit(1)
 
-    @Log()
-    def create_exit_message(self):
-        return {
-            ACTION: EXIT,
-            TIME: time.time(),
-            DESTINATION: self.account_name
-        }
-
-    @Log()
     def run(self):
         self.help_messages()
         while True:
@@ -76,14 +73,13 @@ class ClientSender(threading.Thread):
                 print("Не удалось распознать команду. Попробуйте снова (для вызова справки введите 'help').")
 
 
-class ClientReader(threading.Thread):
+class ClientReader(threading.Thread, metaclass=ClientVerifier):
 
     def __init__(self, sock, account_name):
-        super(ClientReader, self).__init__()
         self.sock = sock
         self.account_name = account_name
+        super().__init__()
 
-    @Log()
     def run(self):
         while True:
             try:
@@ -163,7 +159,6 @@ def main():
         send_message(transport, user_request(request_name))
         response = server_response(get_message(transport))
         CLIENT_LOGGER.info(f'Ответ сервера принят: {response}')
-        print(response)
     except ServerError as error:
         CLIENT_LOGGER.error(f'При установке соединения сервер вернул ошибку: {error.text}')
         sys.exit(1)
