@@ -4,17 +4,18 @@ import socket
 import sys
 import logging
 import argparse
-
 import logs.server_log_config
 
 from common.variables import *
 from common.utils import get_message, send_message
 from decos import Log
+from descriptors import PortVerifier
 
 SERVER_LOGGER = logging.getLogger('server')
 
 
 class Server:
+    listen_port = PortVerifier()
 
     def __init__(self, listen_address, listen_port):
         self.listen_address = listen_address
@@ -149,10 +150,6 @@ def arg_parser():
     namespace = parser.parse_args(sys.argv[1:])
     listen_address = namespace.a
     listen_port = namespace.p
-
-    if not 1023 < listen_port < 65536:
-        SERVER_LOGGER.critical(f'Попытка запуска сервера с указанием неподходящего порта {listen_port}')
-        sys.exit(1)
 
     return listen_address, listen_port
 
