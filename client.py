@@ -17,79 +17,90 @@ from decos import Log
 CLIENT_LOGGER = logging.getLogger('client')
 
 
-@Log()
-def create_exit_message(account_name):
-    return {
-        ACTION: EXIT,
-        TIME: time.time(),
-        DESTINATION: account_name
-    }
+class ClientSender(threading.Thread):
 
+    def __init__(self, sock, account_name):
+        super(ClientSender, self).__init__()
+        self.sock = sock
+        self.account_name = account_name
 
-def help_messages():
-    print("Поддерживаемые команды: \n"
-          "'message' - отправить сообщение.\n"
-          "'help' - вызов справки.\n"
-          "'exit' - завершение работы программы.")
+    def help_messages(self):
+        print("Поддерживаемые команды: \n"
+              "'message' - отправить сообщение.\n"
+              "'help' - вызов справки.\n"
+              "'exit' - завершение работы программы.")
 
-
-@Log()
-def message_handler(request_socket, request_username):
-    while True:
+    @Log()
+    def creat_user_message(self):
+        receiver = input('Введите имя получателя: ')
+        message = input('Введите сообщение: ')
+        user_message = {
+            ACTION: MESSAGE,
+            SENDER: self.account_name,
+            DESTINATION: receiver,
+            TIME: time.time(),
+            MESSAGE_TEXT: message
+        }
+        CLIENT_LOGGER.info(f'Сформировано сообщение {user_message}.')
         try:
-            message = get_message(request_socket)
-            if ACTION in message and message[ACTION] == MESSAGE and SENDER in message and MESSAGE_TEXT in message \
-                    and DESTINATION in message and message[DESTINATION] == request_username:
-                print(f'\nПолучено сообщение: {message[MESSAGE_TEXT]}.\nОт пользователя {message[SENDER]}\n'
-                      f'Введите команду: ')
-                CLIENT_LOGGER.info(f'Получено сообщение {message[MESSAGE_TEXT]} от пользователя {message[SENDER]}')
-            else:
-                CLIENT_LOGGER.error(f'Получено некорректное сообщение: {message}')
-        except IncorrectDataRecivedError:
-            CLIENT_LOGGER.error(f'Не удалось декодировать полученное сообщение.')
-        except (OSError, ConnectionError, ConnectionAbortedError,
-                ConnectionResetError, json.JSONDecodeError):
+            send_message(self.sock, user_message)
+            CLIENT_LOGGER.info(f'Сообщение {user_message} пользователю {receiver} отправлено.')
+        except Exception:
             CLIENT_LOGGER.critical(f'Потеряно соединение с сервером.')
             sys.exit(1)
 
+    @Log()
+    def create_exit_message(self):
+        return {
+            ACTION: EXIT,
+            TIME: time.time(),
+            DESTINATION: self.account_name
+        }
 
-@Log()
-def creat_user_message(request_socket, account_name):
-    receiver = input('Введите имя получателя: ')
-    message = input('Введите сообщение: ')
-    user_message = {
-        ACTION: MESSAGE,
-        SENDER: account_name,
-        DESTINATION: receiver,
-        TIME: time.time(),
-        MESSAGE_TEXT: message
-    }
-    CLIENT_LOGGER.info(f'Сформировано сообщение {user_message}.')
-    try:
-        send_message(request_socket, user_message)
-        CLIENT_LOGGER.info(f'Сообщение {user_message} пользователю {receiver} отправлено.')
-    except Exception:
-        CLIENT_LOGGER.critical(f'Потеряно соединение с сервером.')
-        sys.exit(1)
+    @Log()
+    def run(self):
+        self.help_messages()
+        while True:
+            request = input('Введите команду: ').strip()
+            if request == 'message':
+                self.creat_user_message()
+            elif request == 'help':
+                self.help_messages()
+            elif request == 'exit':
+                send_message(self.sock, self.create_exit_message())
+                print('Закрытие соединения.')
+                CLIENT_LOGGER.info('Закрытие соединения по запросу пользователя.')
+                time.sleep(1)
+                break
+            else:
+                print("Не удалось распознать команду. Попробуйте снова (для вызова справки введите 'help').")
 
 
-@Log()
-def user_poll(request_sock, request_username):
-    help_messages()
-    while True:
-        request = input('Введите команду: ').strip()
-        if request == 'message':
-            creat_user_message(request_sock, request_username)
-        elif request == 'help':
-            help_messages()
-        elif request == 'exit':
-            send_message(request_sock, create_exit_message(request_username))
-            print('Закрытие соединения.')
-            CLIENT_LOGGER.info('Закрытие соединения по запросу пользователя.')
-            time.sleep(1)
-            break
-        else:
-            print("Не удалось распознать команду. Попробуйте снова (для вызова справки введите 'help').")
+class ClientReader(threading.Thread):
+
+    def __init__(self, sock, account_name):
+        super(ClientReader, self).__init__()
+        self.sock = sock
+        self.account_name = account_name
+
+    @Log()
+    def run(self):
+        while True:
+            try:
+                message = get_message(self.sock)
+                if ACTION in message and message[ACTION] == MESSAGE and SENDER in message and MESSAGE_TEXT in message \
+                        and DESTINATION in message and message[DESTINATION] == self.account_name:
+                    print(f'\nПолучено сообщение: {message[MESSAGE_TEXT]}.\nОт пользователя {message[SENDER]}\n'
+                          f'Введите команду: ')
+                    CLIENT_LOGGER.info(f'Получено сообщение {message[MESSAGE_TEXT]} от пользователя {message[SENDER]}')
+                else:
+                    CLIENT_LOGGER.error(f'Получено некорректное сообщение: {message}')
+            except IncorrectDataRecivedError:
+                CLIENT_LOGGER.error(f'Не удалось декодировать полученное сообщение.')
+            except (OSError, ConnectionError, ConnectionAbortedError,
+                    ConnectionResetError, json.JSONDecodeError):
+                CLIENT_LOGGER.critical(f'Потеряно соединение с сервером.')
+                sys.exit(1)
 
 
 @Log()
@@ -168,11 +179,11 @@ def main():
         sys.exit(1)
     else:
 
-        listen_user = threading.Thread(target=message_handler, args=(transport, request_name))
+        listen_user = ClientReader(transport, request_name)
         listen_user.daemon = True
         listen_user.start()
 
-        send_user = threading.Thread(target=user_poll, args=(transport, request_name))
+        send_user = ClientSender(transport, request_name)
         send_user.daemon = True
         send_user.start()
 
