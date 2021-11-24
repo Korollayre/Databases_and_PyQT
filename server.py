@@ -9,7 +9,7 @@ import logs.server_log_config
 from common.variables import *
 from common.utils import get_message, send_message
 from decos import Log
-from descriptors import PortVerifier
+from descriptors import PortVerifier, AddressVerifier
 from metaclasses import ServerVerifier
 
 SERVER_LOGGER = logging.getLogger('server')
@@ -17,6 +17,7 @@ SERVER_LOGGER = logging.getLogger('server')
 
 class Server(metaclass=ServerVerifier):
     listen_port = PortVerifier()
+    listen_address = AddressVerifier()
 
     def __init__(self, listen_address, listen_port):
         self.listen_address = listen_address
