@@ -8,10 +8,12 @@ while True:
     if ACTION == 'q':
         break
     elif ACTION == 's':
+        users = int(input('Введите количество клиентов для запуска: '))
+
         PROCESSES.append(subprocess.Popen('python server.py',
                                           creationflags=subprocess.CREATE_NEW_CONSOLE))
 
-        for i in range(4):
+        for i in range(users):
             PROCESSES.append(
                 subprocess.Popen(f'python client.py --name test{i + 1}',
                                  creationflags=subprocess.CREATE_NEW_CONSOLE))
