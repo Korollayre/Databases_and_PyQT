@@ -16,8 +16,8 @@ SERVER_LOGGER = logging.getLogger('server')
 
 
 class Server(metaclass=ServerVerifier):
-    listen_port = PortVerifier()
-    listen_address = AddressVerifier()
+    port = PortVerifier()
+    address = AddressVerifier()
 
     def __init__(self, listen_address, listen_port):
         self.listen_address = listen_address
