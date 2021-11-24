@@ -11,6 +11,8 @@ from common.utils import get_message, send_message
 from decos import Log
 from descriptors import PortVerifier, AddressVerifier
 from metaclasses import ServerVerifier
+from server_database import ServerDatabase
+from threading import Thread
 
 SERVER_LOGGER = logging.getLogger('server')
 
@@ -19,13 +21,24 @@ class Server(metaclass=ServerVerifier):
     port = PortVerifier()
     address = AddressVerifier()
 
-    def __init__(self, listen_address, listen_port):
+    def __init__(self, listen_address, listen_port, database):
         self.listen_address = listen_address
         self.listen_port = listen_port
+
+        self.database = database
 
         self.clients_list = []
         self.messages_list = []
         self.names = {}
+
+    def help_messages(self):
+        print("Поддерживаемые команды: \n"
+              "'users' - список зарегистрированных пользователей.\n"
+              "'connected' - список пользователей онлайн.\n"
+              "'history' - история посещения пользователя.\n"
+              "'users' - список зарегистрированных пользователей.\n"
+              "'help' - вызов справки.\n"
+              "'exit' - завершение работы программы.")
 
     def init_socket(self):
         SERVER_LOGGER.info(f'Сервер запущен. Порт для подключения: {self.listen_port}, адрес: {self.listen_address}. '
@@ -95,6 +108,8 @@ class Server(metaclass=ServerVerifier):
         if ACTION in message and message[ACTION] == PRESENCE and TIME in message and USER in message:
             if message[USER][ACCOUNT_NAME] not in self.names.keys():
                 self.names[message[USER][ACCOUNT_NAME]] = user
+                user_address, user_port = user.getpeername()
+                self.database.user_login(message[USER][ACCOUNT_NAME], user_address, user_port)
                 send_message(user, {RESPONSE: 200})
                 SERVER_LOGGER.info(f'Зарегистрирован новый пользователь {user}.')
             else:
@@ -112,6 +127,7 @@ class Server(metaclass=ServerVerifier):
             SERVER_LOGGER.info(f'Добавление сообщения {message} в очередь.')
             return
         elif ACTION in message and message[ACTION] == EXIT and ACCOUNT_NAME in message:
+            self.database.user_logout(message[ACCOUNT_NAME])
             self.clients_list.remove(self.names[message[ACCOUNT_NAME]])
             self.names[message[ACCOUNT_NAME]].close()
             del self.names[message[ACCOUNT_NAME]]
@@ -154,10 +170,39 @@ def arg_parser():
     return listen_address, listen_port
 
 
+def poll(cls, database):
+    cls.help_messages()
+    while True:
+        command = input('\nВведите команду: ')
+        if command == 'help':
+            cls.help_messages()
+        elif command == 'exit':
+            break
+        elif command == 'users':
+            for user in sorted(database.users_list()):
+                print(f'Пользователь - {user[0]}, последний вход - {user[1]}.')
+        elif command == 'connected':
+            for user in sorted(database.active_users_list()):
+                print(f'Пользователь - {user[0]}, ip - {user[1]}, port - {user[2]}, время подключения - {user[3]}.')
+        elif command == 'history':
+            username = input('Введите имя пользователя для просмотра его истории посещения. '
+                             'Для вывода всей истории, просто нажмите Enter: ')
+            for user in sorted(database.login_history(username)):
+                print(f'Пользователь - {user[0]}, время входа - {user[1]}, ip - {user[2]}, port - {user[3]}.')
+        else:
+            print("Не удалось распознать команду. Попробуйте снова (для вызова справки введите 'help').")
+
+
 def main():
+    database = ServerDatabase()
     listen_address, listen_port = arg_parser()
 
-    server = Server(listen_address, listen_port)
+    server = Server(listen_address, listen_port, database)
+
+    poll_thread = Thread(target=poll, args=(server, database))
+    poll_thread.daemon = True
+    poll_thread.start()
+
     server.run()
 
 
