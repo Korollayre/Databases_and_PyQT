@@ -78,8 +78,8 @@ class MainWindow(QMainWindow):
         self.toolbar.addAction(self.history_view_button)
 
         self.setMinimumHeight(300)
-
-        self.resize(self.sizeHint().width(), self.minimumHeight())
+        self.setMinimumWidth(500)
+        self.resize(self.minimumWidth(), self.minimumHeight())
         self.setWindowTitle('Buinichenko Mikhail server GUI')
 
         self.label = QLabel('Список подключенных клиентов:', self)
@@ -117,10 +117,13 @@ class HistoryWindow(QDialog):
         self.setWindowTitle('Клиентская история')
 
         self.setMinimumHeight(300)
-
-        self.resize(self.sizeHint().width(), self.minimumHeight())
+        self.setMinimumWidth(650)
+        self.resize(self.minimumWidth(), self.minimumHeight())
 
         self.history_table = QTableView(self)
+
+        self.search_field = QLineEdit(self)
+        self.search_field.setPlaceholderText('Введите имя пользователя для сортировки')
 
         self.close_button = QPushButton('Закрыть', self)
         self.close_button.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
@@ -130,11 +133,11 @@ class HistoryWindow(QDialog):
         buttonLayout = QHBoxLayout()
 
         buttonLayout.addWidget(self.close_button)
+        mainLayout.addWidget(self.search_field)
         mainLayout.addWidget(self.history_table)
         mainLayout.addLayout(buttonLayout)
 
         self.setLayout(mainLayout)
-
         self.show()
 
 
@@ -144,9 +147,7 @@ class ConfigurationWindow(QDialog):
         self.initUI()
 
     def initUI(self):
-        # self.setFixedSize(500, 300)
         self.setFixedSize(self.sizeHint())
-        # self.resize(self.sizeHint())
         self.setWindowTitle('Настройки сервера')
 
         self.db_path_label = QLabel('Путь до файла базы данных: ', self)
@@ -205,6 +206,6 @@ class ConfigurationWindow(QDialog):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = ConfigurationWindow()
+    window = HistoryWindow()
 
     app.exec_()
