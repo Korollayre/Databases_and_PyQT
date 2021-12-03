@@ -15,6 +15,12 @@ ENCODING = 'utf-8'
 # Уровень логирования
 LOGGING_LEVEL = logging.DEBUG
 
+GET_CONTACTS = 'get_contacts'
+LIST_INFO = 'data_list'
+REMOVE_CONTACT = 'remove'
+ADD_CONTACT = 'add'
+USERS_REQUEST = 'get_users'
+
 # Прококол JIM основные ключи:
 ACTION = 'action'
 TIME = 'time'
