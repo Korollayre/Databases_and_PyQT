@@ -169,15 +169,13 @@ class ServerDatabase:
 
         return [contact[1] for contact in contacts.all()]
 
-    def message_history(self, username=None):
+    def message_history(self):
         query = self.session.query(
             self.AllUsers.username,
             self.AllUsers.last_login,
             self.UsersMessagesHistory.sent,
             self.UsersMessagesHistory.accepted,
         ).join(self.AllUsers)
-        if username:
-            query = query.filter(self.AllUsers.username == username)
         return query.all()
 
     def users_list(self):
