@@ -48,7 +48,7 @@ class Server(metaclass=ServerVerifier):
 
         transport = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         transport.bind((self.listen_address, self.listen_port))
-        transport.settimeout(1)
+        transport.settimeout(0.5)
 
         self.sock = transport
         self.sock.listen(MAX_CONNECTIONS)
