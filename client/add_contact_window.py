@@ -1,10 +1,9 @@
-from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QLabel, QTableView, QDialog, QPushButton, \
-    QLineEdit, QFileDialog, QDesktopWidget, QWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QSizePolicy, QComboBox
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
-from PyQt5.QtCore import Qt
-
-import sys
 import logging
+import sys
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QPushButton, \
+    QGridLayout, QComboBox
 
 CLIENT_LOGGER = logging.getLogger('client')
 
