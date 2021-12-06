@@ -5,7 +5,6 @@ import json
 import socket
 import threading
 import time
-import logging
 import argparse
 
 from common.variables import *
@@ -13,7 +12,7 @@ from common.utils import get_message, send_message
 from errors import ReqFieldMissingError, ServerError, IncorrectDataRecivedError
 from decos import Log
 from metaclasses import ClientVerifier
-from client_database import ClientDatabase
+from client.client_database import ClientDatabase
 
 CLIENT_LOGGER = logging.getLogger('client')
 
