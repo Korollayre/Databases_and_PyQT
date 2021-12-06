@@ -20,17 +20,15 @@ class AddContactWindow(QDialog):
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle('Добавление контакта')
+        self.setWindowTitle('Добавление контактов')
 
         self.setFixedSize(400, 120)
-        self.sizeHint()
         self.setAttribute(Qt.WA_DeleteOnClose)
         self.setModal(True)
 
         self.label = QLabel('Выберите контакт для добавления:')
 
         self.selector = QComboBox(self)
-
         self.selector.setFixedHeight(30)
 
         self.refresh_button = QPushButton('Обновить список', self)
@@ -45,11 +43,11 @@ class AddContactWindow(QDialog):
         self.close_button.clicked.connect(self.close)
 
         grid = QGridLayout()
-        print(grid.getContentsMargins())
+
         grid.setVerticalSpacing(20)
+
         grid.addWidget(self.label, 0, 0, 1, 3)
 
-        # selector_layout.setAlignment(Qt.Alignment(Qt.AlignCenter))
         grid.addWidget(self.selector, 1, 0, 1, 3)
         grid.addWidget(self.refresh_button, 2, 1, 1, 2)
 
@@ -65,8 +63,8 @@ class AddContactWindow(QDialog):
     def possible_contacts_list(self):
         self.selector.clear()
 
-        contacts_list = set(self.database.get_contacts())
-        users_list = set(self.database.get_users())
+        contacts_list = set(self.database.get_user_contacts())
+        users_list = set(self.database.get_active_users())
 
         users_list.remove(self.transport.name)
 
