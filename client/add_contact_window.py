@@ -1,6 +1,8 @@
 import logging
 import sys
 
+import logs.client_log_config
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QPushButton, \
     QGridLayout, QComboBox
