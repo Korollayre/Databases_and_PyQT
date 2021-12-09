@@ -1,10 +1,10 @@
 import argparse
 import sys
-import threading
 
 from PyQt5.QtWidgets import QApplication
 
 from client.client_database import ClientDatabase
+from client.main_window import MainWindow
 from client.transport import ClientTransport
 from client.welcome_window import WelcomeWindow
 from common.variables import *
@@ -12,10 +12,6 @@ from decos import Log
 from errors import ServerError
 
 CLIENT_LOGGER = logging.getLogger('client')
-
-sock_lock = threading.Lock()
-database_lock = threading.Lock()
-
 
 @Log()
 def arg_parser():
@@ -61,13 +57,13 @@ def main():
     except ServerError as error:
         CLIENT_LOGGER.critical(f'Сервер вернул ошибку - {error.text()}')
         sys.exit(1)
+
     client_transport.setDaemon(True)
     client_transport.start()
 
-    # main_window = ClieintMainWindow(database, client_transport)
-    # main_window.make_connection(transport)
-    # main_window.setWindowTitle(f'Чат Программа alpha release - {request_name}')
-    # app.exec_()
+    main_window = MainWindow(database, client_transport)
+    main_window.make_connection(client_transport)
+    app.exec_()
 
     client_transport.transport_shutdown()
     client_transport.join()

@@ -56,6 +56,7 @@ class Server(metaclass=ServerVerifier):
         SERVER_LOGGER.info(f'Настройка сокета завершена.')
 
     def run(self):
+        global new_connection
         self.init_socket()
 
         while True:
@@ -87,8 +88,9 @@ class Server(metaclass=ServerVerifier):
                                 self.database.user_logout(name)
                                 del self.names[name]
                                 break
-                        sender.close()
                         self.clients_list.remove(sender)
+                        with connection_flag_lock:
+                            new_connection = True
 
             for message in self.messages_list:
                 try:
@@ -97,6 +99,8 @@ class Server(metaclass=ServerVerifier):
                     SERVER_LOGGER.info(f'Соединение с клиентом {message[DESTINATION]} разорвана.')
                     self.clients_list.remove(self.names[message[DESTINATION]])
                     del self.names[message[DESTINATION]]
+                    with connection_flag_lock:
+                        new_connection = True
             self.messages_list.clear()
 
     def process_user_message(self, message, user):
@@ -135,9 +139,16 @@ class Server(metaclass=ServerVerifier):
 
         elif ACTION in message and message[ACTION] == MESSAGE and DESTINATION in message and TIME in message \
                 and SENDER in message and MESSAGE_TEXT in message and self.names[message[SENDER]] == user:
-            self.messages_list.append(message)
-            self.database.message_exchange(message[SENDER], message[DESTINATION])
-            SERVER_LOGGER.info(f'Добавление сообщения {message} в очередь.')
+            if message[DESTINATION] in self.names:
+                self.messages_list.append(message)
+                self.database.message_exchange(message[SENDER], message[DESTINATION])
+                send_message(user, {RESPONSE: 200})
+                SERVER_LOGGER.info(f'Добавление сообщения {message} в очередь.')
+            else:
+                send_message(user, {
+                    RESPONSE: 400,
+                    ERROR: 'Пользователь не зарегистрирован на сервере.'
+                })
             return
 
         elif ACTION in message and message[ACTION] == EXIT and ACCOUNT_NAME in message \
@@ -168,7 +179,7 @@ class Server(metaclass=ServerVerifier):
 
         elif ACTION in message and message[ACTION] == USERS_REQUEST and ACCOUNT_NAME in message \
                 and self.names[message[ACCOUNT_NAME]] == user:
-            response = {RESPONSE: 202, LIST_INFO: [user[0] for user in self.database.users_list()]}
+            response = {RESPONSE: 202, LIST_INFO: [user[0] for user in self.database.active_users_list()]}
             send_message(user, response)
 
         else:
@@ -214,8 +225,6 @@ def admin_gui(settings, database):
 
     main_window.statusBar().showMessage('Server Working')
     main_window.active_clients_table.setModel(active_users_table_create(database))
-    main_window.active_clients_table.resizeColumnsToContents()
-    main_window.active_clients_table.resizeRowsToContents()
 
     active_users_table_headers = main_window.active_clients_table.horizontalHeader()
     active_users_table_headers.setSectionResizeMode(0, QHeaderView.Stretch)
@@ -228,8 +237,6 @@ def admin_gui(settings, database):
         if new_connection:
             main_window.active_clients_table.setModel(
                 active_users_table_create(database))
-            main_window.active_clients_table.resizeColumnsToContents()
-            main_window.active_clients_table.resizeRowsToContents()
             with connection_flag_lock:
                 new_connection = False
 
@@ -245,10 +252,6 @@ def admin_gui(settings, database):
         history_window.search_field.textChanged.connect(filter_model.setFilterRegExp)
 
         history_window.history_table.setModel(filter_model)
-        history_window.history_table.resizeColumnsToContents()
-        history_window.history_table.resizeRowsToContents()
-
-
 
         history_table_headers = history_window.history_table.horizontalHeader()
         history_table_headers.setSectionResizeMode(0, QHeaderView.Stretch)

@@ -50,10 +50,10 @@ class ClientTransport(threading.Thread, QObject):
             ACTION: PRESENCE,
             TIME: time.time(),
             USER: {
-                ACCOUNT_NAME: self.user_name
+                ACCOUNT_NAME: self.username
             }
         }
-        CLIENT_LOGGER.info(f'Генерация запроса {PRESENCE} пользователя {self.user_name}')
+        CLIENT_LOGGER.info(f'Генерация запроса {PRESENCE} пользователя {self.username}')
         return user_data
 
     def parsing_server_response(self, response):
@@ -69,9 +69,9 @@ class ClientTransport(threading.Thread, QObject):
 
         elif ACTION in response and response[ACTION] == MESSAGE and SENDER in response \
                 and MESSAGE_TEXT in response and DESTINATION in response and \
-                response[DESTINATION] == self.account_name:
+                response[DESTINATION] == self.username:
             CLIENT_LOGGER.info(f'Получено сообщение {response[MESSAGE_TEXT]} от пользователя {response[SENDER]}')
-            self.database.save_user_message(response[SENDER], self.account_name, response[MESSAGE_TEXT])
+            self.database.save_user_message(response[SENDER], self.username, response[MESSAGE_TEXT])
             self.new_message_signal.emit(response[SENDER])
 
     def connection_init(self, port, address):
@@ -164,7 +164,7 @@ class ClientTransport(threading.Thread, QObject):
             send_message(self.transport, request)
             self.parsing_server_response(get_message(self.transport))
 
-    def creat_user_message(self, receiver, message):
+    def create_user_message(self, receiver, message):
         user_message = {
             ACTION: MESSAGE,
             SENDER: self.username,
@@ -197,15 +197,16 @@ class ClientTransport(threading.Thread, QObject):
     def run(self):
         CLIENT_LOGGER.info('Запущен процесс-приёмник сообщений сервера.')
         while self.running:
-            time.sleep(1)
+            time.sleep(2)
             with sock_lock:
                 try:
                     self.transport.settimeout(0.5)
                     response = get_message(self.transport)
-                except OSError:
-                    CLIENT_LOGGER.critical('Потеряно соединение с сервером.')
-                    self.running = False
-                    self.connection_lost_signal.emit()
+                except OSError as error:
+                    if error.errno:
+                        CLIENT_LOGGER.critical('Потеряно соединение с сервером.')
+                        self.running = False
+                        self.connection_lost_signal.emit()
                 except (ConnectionError, ConnectionAbortedError, ConnectionResetError, json.JSONDecodeError, TypeError):
                     CLIENT_LOGGER.critical('Потеряно соединение с сервером.')
                     self.running = False
@@ -214,4 +215,4 @@ class ClientTransport(threading.Thread, QObject):
                     CLIENT_LOGGER.info(f'Ответ сервера принят: {response}')
                     self.parsing_server_response(response)
                 finally:
-                    self.transport.settimeout(0.5)
+                    self.transport.settimeout(5)

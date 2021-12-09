@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QPushButton, \
-    QLineEdit, QVBoxLayout, QHBoxLayout, QMessageBox
+    QLineEdit, QVBoxLayout, QHBoxLayout, QMessageBox, qApp
 
 import sys
 
@@ -25,7 +25,7 @@ class WelcomeWindow(QDialog):
         self.username_filed = QLineEdit(self)
 
         self.close_button = QPushButton('Выйти', self)
-        self.close_button.clicked.connect(self.close)
+        self.close_button.clicked.connect(qApp.exit)
 
         self.enter_button = QPushButton('Войти', self)
         self.enter_button.clicked.connect(self.enter_button_click)
@@ -48,7 +48,7 @@ class WelcomeWindow(QDialog):
     def enter_button_click(self):
         if self.username_filed.text():
             self.enter_button_pressed = True
-            self.close()
+            qApp.exit()
         else:
             self.message.show()
 
