@@ -1,8 +1,8 @@
 """Утилиты"""
 import json
 
+from common.variables import ENCODING, MAX_PACKAGE_LENGTH
 from decos import Log
-from common.variables import MAX_PACKAGE_LENGTH, ENCODING
 from errors import IncorrectDataRecivedError, NonDictInputError
 
 

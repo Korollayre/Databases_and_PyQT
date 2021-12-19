@@ -1,9 +1,9 @@
 import logging
 import os
 import sys
-
 from logging import handlers
-from common.variables import LOGGING_LEVEL, ENCODING
+
+from common.variables import ENCODING, LOGGING_LEVEL
 
 LOGGER = logging.getLogger('server')
 

@@ -1,7 +1,8 @@
 import unittest
 
-from common.variables import RESPONSE, ERROR, USER, ACCOUNT_NAME, TIME, ACTION, PRESENCE, PORT
-from client import user_request, server_response
+from client import server_response, user_request
+from common.variables import (ACCOUNT_NAME, ACTION, ERROR, PORT, PRESENCE,
+                              RESPONSE, TIME, USER)
 
 
 class TestClient(unittest.TestCase):

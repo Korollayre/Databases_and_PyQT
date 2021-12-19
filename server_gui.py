@@ -1,8 +1,10 @@
-from PyQt5.QtWidgets import QMainWindow, QAction, qApp, QApplication, QLabel, QTableView, QDialog, QPushButton, \
-    QLineEdit, QFileDialog, QDesktopWidget, QWidget, QGridLayout, QVBoxLayout, QHBoxLayout, QSizePolicy
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
-
 import sys
+
+from PyQt5.QtGui import QStandardItem, QStandardItemModel
+from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget, QDialog,
+                             QFileDialog, QGridLayout, QHBoxLayout, QLabel,
+                             QLineEdit, QMainWindow, QPushButton, QSizePolicy,
+                             QTableView, QVBoxLayout, QWidget, qApp)
 
 
 def active_users_table_create(database):

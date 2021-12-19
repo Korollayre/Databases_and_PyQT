@@ -1,26 +1,25 @@
 """Программа-сервер"""
+import argparse
 import configparser
+import logging
 import os
 import select
 import socket
 import sys
-import logging
-import argparse
+from threading import Lock, Thread
 
-from PyQt5.QtCore import QTimer, QSortFilterProxyModel
-from PyQt5.QtWidgets import QApplication, QMessageBox, QHeaderView
+from PyQt5.QtCore import QSortFilterProxyModel, QTimer
+from PyQt5.QtWidgets import QApplication, QHeaderView, QMessageBox
 
 import logs.server_log_config
-
-from common.variables import *
 from common.utils import get_message, send_message
+from common.variables import *
 from decos import Log
-from descriptors import PortVerifier, AddressVerifier
+from descriptors import AddressVerifier, PortVerifier
 from metaclasses import ServerVerifier
 from server_database import ServerDatabase
-from threading import Thread, Lock
-from server_gui import MainWindow, HistoryWindow, ConfigurationWindow, active_users_table_create, \
-    users_history_table_create
+from server_gui import (ConfigurationWindow, HistoryWindow, MainWindow,
+                        active_users_table_create, users_history_table_create)
 
 SERVER_LOGGER = logging.getLogger('server')
 

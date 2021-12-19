@@ -1,6 +1,5 @@
 import logging
 import sys
-
 from ipaddress import ip_address
 
 DESCRIPTORS_LOGGER = logging.getLogger('server')

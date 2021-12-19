@@ -1,8 +1,8 @@
 import unittest
 
-from common.variables import RESPONSE, ERROR, USER, ACCOUNT_NAME, TIME, ACTION, PRESENCE, PORT, \
-    RESPONDEFAULT_IP_ADDRESSSE
 from client import user_request
+from common.variables import (ACCOUNT_NAME, ACTION, ERROR, PORT, PRESENCE,
+                              RESPONDEFAULT_IP_ADDRESSSE, RESPONSE, TIME, USER)
 from server import process_user_message
 
 

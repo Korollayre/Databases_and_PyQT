@@ -1,7 +1,8 @@
-from PyQt5.QtWidgets import QApplication, QLabel, QDialog, QPushButton, \
-    QLineEdit, QVBoxLayout, QHBoxLayout, QMessageBox, qApp
-
 import sys
+
+from PyQt5.QtWidgets import (QApplication, QDialog, QHBoxLayout, QLabel,
+                             QLineEdit, QMessageBox, QPushButton, QVBoxLayout,
+                             qApp)
 
 
 class WelcomeWindow(QDialog):

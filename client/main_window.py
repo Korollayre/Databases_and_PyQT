@@ -1,8 +1,8 @@
 import logging
 
-from PyQt5.QtCore import Qt, QEvent, pyqtSlot, QSortFilterProxyModel
-from PyQt5.QtGui import QStandardItemModel, QStandardItem, QIcon
-from PyQt5.QtWidgets import QMainWindow, QAction, QMessageBox, QMenu
+from PyQt5.QtCore import QEvent, QSortFilterProxyModel, Qt, pyqtSlot
+from PyQt5.QtGui import QIcon, QStandardItem, QStandardItemModel
+from PyQt5.QtWidgets import QAction, QMainWindow, QMenu, QMessageBox
 
 from client.main_window_conv import Ui_MainClientWindow
 from errors import ServerError
