@@ -32,7 +32,7 @@ class MainWindow(QMainWindow):
         self.configuration_button = QAction('Настройки сервера', self)
         self.refresh_button = QAction('Обновить список клиентов', self)
         self.register_button = QAction('Зарегистрировать пользователя', self)
-        self.remove_button = QAction('Обновить список клиентов', self)
+        self.remove_button = QAction('Удалить пользователя', self)
 
         self.users_menu = QMenu('Пользователи', self)
         self.users_menu.addAction(self.refresh_button)
@@ -45,6 +45,8 @@ class MainWindow(QMainWindow):
         self.menuBar.addAction(self.history_view_button)
 
         self.refresh_button.triggered.connect(self.active_users_table_create)
+        self.register_button.triggered.connect(self.show_registration)
+        self.remove_button.triggered.connect(self.show_removing)
 
         self.setMinimumHeight(300)
         self.setMinimumWidth(500)
@@ -104,17 +106,21 @@ class MainWindow(QMainWindow):
         return model
 
     def show_history(self):
-        window = HistoryWindow(self.database)
-        window.show()
+        global history_window
+        history_window = HistoryWindow(self.database)
+        history_window.show()
 
     def show_configuration(self):
-        window = ConfigurationWindow(self.settings)
-        window.show()
+        global settings_window
+        settings_window = ConfigurationWindow(self.settings)
+        settings_window.show()
 
     def show_registration(self):
-        window = RegisterUser(self.database, self.server_thread)
-        window.show()
+        global registration_window
+        registration_window = RegisterUser(self.database, self.server_thread)
+        registration_window.show()
 
     def show_removing(self):
-        window = RemoveUser(self.database, self.server_thread)
-        window.show()
+        global remove_window
+        remove_window = RemoveUser(self.database, self.server_thread)
+        remove_window.show()
