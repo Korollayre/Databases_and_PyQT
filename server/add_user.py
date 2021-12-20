@@ -77,21 +77,16 @@ class RegisterUser(QDialog):
             self.messages.critical(
                 self, 'Ошибка', 'Введённые пароли не совпадают.')
             return
-        elif self.database.check_user(self.client_name.text()):
+        elif self.database.check_user(self.username.text()):
             self.messages.critical(
                 self, 'Ошибка', 'Пользователь уже существует.')
             return
         else:
             password_bytes = self.password.text().encode('utf-8')
             salt = self.username.text().lower().encode('utf-8')
-            password_hash = hashlib.pbkdf2_hmac('sha256', password_bytes, salt, 100000)
+            password_hash = hashlib.pbkdf2_hmac('sha512', password_bytes, salt, 10000)
             self.database.user_registration(self.username.text(), binascii.hexlify(password_hash))
             self.messages.information(self, 'Успех', 'Пользователь успешно зарегистрирован.')
             self.server.service_update_lists()
             self.close()
 
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    w = RegisterUser(3, 4)
-    app.exec_()
