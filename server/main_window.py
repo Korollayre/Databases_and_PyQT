@@ -44,6 +44,9 @@ class MainWindow(QMainWindow):
         self.menuBar.addAction(self.configuration_button)
         self.menuBar.addAction(self.history_view_button)
 
+        self.configuration_button.triggered.connect(self.show_configuration)
+        self.history_view_button.triggered.connect(self.show_history)
+
         self.refresh_button.triggered.connect(self.active_users_table_create)
         self.register_button.triggered.connect(self.show_registration)
         self.remove_button.triggered.connect(self.show_removing)
