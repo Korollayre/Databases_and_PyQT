@@ -46,8 +46,6 @@ class RemoveUser(QDialog):
 
         self.users_table_create()
 
-        self.show()
-
     def remove_user(self):
         current_user = self.users_table.currentIndex().data()
         if self.messages.question(self, 'Удаление пользователя',

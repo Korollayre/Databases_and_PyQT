@@ -68,8 +68,6 @@ class RegisterUser(QDialog):
 
         self.setLayout(main_layout)
 
-        self.show()
-
     def registration(self):
         if not self.username.text():
             self.messages.critical(

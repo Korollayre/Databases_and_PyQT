@@ -64,8 +64,6 @@ class ConfigurationWindow(QDialog):
         self.port.insert(self.settings['SETTINGS']['Default_port'])
         self.address.insert(self.settings['SETTINGS']['Listen_address'])
 
-        self.show()
-
     def open_file_dialog(self):
         dialog = QFileDialog(self)
         path = dialog.getExistingDirectory()

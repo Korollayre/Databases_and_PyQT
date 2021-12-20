@@ -39,8 +39,6 @@ class HistoryWindow(QDialog):
 
         self.users_history_table_create()
 
-        self.show()
-
     def users_history_table_create(self):
         history = self.database.message_history()
 
