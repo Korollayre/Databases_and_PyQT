@@ -5,7 +5,7 @@ from PyQt5.QtGui import QIcon, QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import QAction, QMainWindow, QMenu, QMessageBox
 
 from client.main_window_conv import Ui_MainClientWindow
-from errors import ServerError
+from common.errors import ServerError
 
 CLIENT_LOGGER = logging.getLogger('client')
 
