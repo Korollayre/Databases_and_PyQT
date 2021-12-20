@@ -5,7 +5,7 @@ from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget, QDialog,
                              QFileDialog, QGridLayout, QHBoxLayout, QLabel,
                              QLineEdit, QMainWindow, QPushButton, QSizePolicy,
-                             QTableView, QVBoxLayout, QWidget, qApp, QHeaderView, QMessageBox)
+                             QTableView, QVBoxLayout, QWidget, qApp, QHeaderView, QMessageBox, QListView)
 
 
 class RemoveUser(QDialog):
@@ -20,8 +20,8 @@ class RemoveUser(QDialog):
 
         self.messages = QMessageBox()
 
-        self.setMinimumHeight(650)
-        self.setMinimumWidth(300)
+        self.setMinimumHeight(500)
+        self.setMinimumWidth(400)
         self.resize(self.minimumWidth(), self.minimumHeight())
 
         self.users_table = QTableView(self)
@@ -39,7 +39,7 @@ class RemoveUser(QDialog):
 
         buttonLayout.addWidget(self.close_button)
         mainLayout.addWidget(self.search_field)
-        mainLayout.addWidget(self.history_table)
+        mainLayout.addWidget(self.users_table)
         mainLayout.addLayout(buttonLayout)
 
         self.setLayout(mainLayout)
@@ -57,7 +57,7 @@ class RemoveUser(QDialog):
                 del self.server.names[current_user]
                 self.server.remove_client(sock)
             self.server.service_update_lists()
-            self.close()
+            self.users_table_create()
 
     def users_table_create(self):
         users = self.database.users_list()
@@ -85,10 +85,8 @@ class RemoveUser(QDialog):
 
         self.search_field.textChanged.connect(self.filter_model.setFilterRegExp)
 
-        self.history_table.setModel(self.filter_model)
+        self.users_table.setModel(self.filter_model)
 
         self.users_table_headers = self.users_table.horizontalHeader()
         self.users_table_headers.setSectionResizeMode(0, QHeaderView.Stretch)
         self.users_table_headers.setSectionResizeMode(1, QHeaderView.Stretch)
-        self.users_table_headers.setSectionResizeMode(2, QHeaderView.Stretch)
-        self.users_table_headers.setSectionResizeMode(3, QHeaderView.Stretch)
