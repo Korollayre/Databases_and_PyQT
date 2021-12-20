@@ -67,7 +67,7 @@ class MessageProcessor(Thread, metaclass=ServerVerifier):
                 user.settimeout(5)
                 self.clients_list.append(user)
 
-            # self.recv_sockets_list, self.send_sockets_list, self.errors_sockets_list = [], [], []
+            self.recv_sockets_list, self.send_sockets_list, self.errors_sockets_list = [], [], []
 
             try:
                 if self.clients_list:
