@@ -1,38 +1,24 @@
 import sys
 
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
+from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget, QDialog,
                              QFileDialog, QGridLayout, QHBoxLayout, QLabel,
                              QLineEdit, QMainWindow, QPushButton, QSizePolicy,
-                             QTableView, QVBoxLayout, QWidget, qApp)
+                             QTableView, QVBoxLayout, QWidget, qApp, QMenu)
 
-
-def active_users_table_create(database):
-    users_list = database.active_users_list()
-    model = QStandardItemModel()
-    model.setHorizontalHeaderLabels(['Имя пользователя', 'IP-адрес', 'Порт подключения', 'Время подключения', ])
-    for row in users_list:
-        username, address, port, time = row
-
-        username = QStandardItem(username)
-        username.setEditable(False)
-
-        address = QStandardItem(address)
-        address.setEditable(False)
-
-        port = QStandardItem(str(port))
-        port.setEditable(False)
-
-        time = QStandardItem(str(time.replace(microsecond=0)))
-        time.setEditable(False)
-
-        model.appendRow([username, address, port, time])
-    return model
+from server.history_window import HistoryWindow
+from server.configuration_window import ConfigurationWindow
+from server.add_user import RegisterUser
+from server.remove_user import RemoveUser
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, database, server, settings):
         super().__init__()
+        self.database = database
+        self.server_thread = server
+        self.settings = settings
         self.initUI()
 
     def initUI(self):
@@ -40,16 +26,25 @@ class MainWindow(QMainWindow):
         exit_action.setShortcut('Ctrl+Q')
         exit_action.triggered.connect(qApp.quit)
 
-        self.toolbar = self.addToolBar('ToolBar')
+        self.menuBar = self.menuBar()
 
         self.history_view_button = QAction('История клиентов', self)
         self.configuration_button = QAction('Настройки сервера', self)
         self.refresh_button = QAction('Обновить список клиентов', self)
+        self.register_button = QAction('Зарегистрировать пользователя', self)
+        self.remove_button = QAction('Обновить список клиентов', self)
 
-        self.toolbar.addAction(exit_action)
-        self.toolbar.addAction(self.refresh_button)
-        self.toolbar.addAction(self.configuration_button)
-        self.toolbar.addAction(self.history_view_button)
+        self.users_menu = QMenu('Пользователи', self)
+        self.users_menu.addAction(self.refresh_button)
+        self.users_menu.addAction(self.register_button)
+        self.users_menu.addAction(self.remove_button)
+
+        self.menuBar.addAction(exit_action)
+        self.menuBar.addMenu(self.users_menu)
+        self.menuBar.addAction(self.configuration_button)
+        self.menuBar.addAction(self.history_view_button)
+
+        self.refresh_button.triggered.connect(self.active_users_table_create)
 
         self.setMinimumHeight(300)
         self.setMinimumWidth(500)
@@ -73,6 +68,11 @@ class MainWindow(QMainWindow):
         window.setLayout(verticalLayout)
 
         self.setCentralWidget(window)
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.active_users_table_create)
+        self.timer.start(1000)
+
         self.show()
 
     def center(self):
@@ -81,3 +81,40 @@ class MainWindow(QMainWindow):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
+    def active_users_table_create(self):
+        users_list = self.database.active_users_list()
+        model = QStandardItemModel()
+        model.setHorizontalHeaderLabels(['Имя пользователя', 'IP-адрес', 'Порт подключения', 'Время подключения', ])
+        for row in users_list:
+            username, address, port, time = row
+
+            username = QStandardItem(username)
+            username.setEditable(False)
+
+            address = QStandardItem(address)
+            address.setEditable(False)
+
+            port = QStandardItem(str(port))
+            port.setEditable(False)
+
+            time = QStandardItem(str(time.replace(microsecond=0)))
+            time.setEditable(False)
+
+            model.appendRow([username, address, port, time])
+        return model
+
+    def show_history(self):
+        window = HistoryWindow(self.database)
+        window.show()
+
+    def show_configuration(self):
+        window = ConfigurationWindow(self.settings)
+        window.show()
+
+    def show_registration(self):
+        window = RegisterUser(self.database, self.server_thread)
+        window.show()
+
+    def show_removing(self):
+        window = RemoveUser(self.database, self.server_thread)
+        window.show()
