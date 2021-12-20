@@ -2,8 +2,8 @@
 import json
 
 from common.variables import ENCODING, MAX_PACKAGE_LENGTH
-from decos import Log
-from errors import IncorrectDataRecivedError, NonDictInputError
+from common.decos import Log
+from common.errors import IncorrectDataRecivedError, NonDictInputError
 
 
 @Log()
