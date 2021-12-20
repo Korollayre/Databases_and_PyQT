@@ -1,16 +1,18 @@
 from datetime import datetime
 
 from sqlalchemy import (Column, DateTime, ForeignKey, Integer, MetaData,
-                        String, Table, create_engine)
+                        String, Table, create_engine, Text)
 from sqlalchemy.orm import mapper, sessionmaker
 from tabulate import tabulate
 
 
 class ServerDatabase:
     class AllUsers:
-        def __init__(self, username):
+        def __init__(self, username, password_hash):
             self.id = None
+            self.pubkey = None
             self.username = username
+            self.password_hash = password_hash
             self.last_login = datetime.now()
 
     class ActiveUsers:
@@ -50,7 +52,9 @@ class ServerDatabase:
 
         users_table = Table('Users', self.metadata,
                             Column('id', Integer, primary_key=True),
+                            Column('pubkey', Text),
                             Column('username', String, unique=True),
+                            Column('password_hash', String),
                             Column('last_login', DateTime),
                             )
 
@@ -96,19 +100,36 @@ class ServerDatabase:
         self.session.query(self.ActiveUsers).delete()
         self.session.commit()
 
-    def user_login(self, username, address, port):
+    def user_registration(self, username, password_hash):
+        user_instance = self.AllUsers(username, password_hash)
+        self.session.add(user_instance)
+        self.session.commit()
+
+        user_messages_instance = self.UsersMessagesHistory(username.id)
+        self.session.add(user_messages_instance)
+        self.session.commit()
+
+    def remove_user(self, username):
+        instance = self.session.query(self.AllUsers).filter_by(username=username).first()
+        self.session.query(self.ActiveUsers).filter_by(user=instance.id).delete()
+        self.session.query(self.LoginHistory).filter_by(user=instance.id).delete()
+        self.session.query(self.UsersContacts).filter_by(owner=instance.id).delete()
+        self.session.query(self.UsersContacts).filter_by(contact=instance.id).delete()
+        self.session.query(self.UsersMessagesHistory).filter_by(user=instance.id).delete()
+        self.session.query(self.AllUsers).filter_by(username=instance.id).delete()
+        self.session.commit()
+
+    def user_login(self, username, address, port, key):
 
         query = self.session.query(self.AllUsers).filter_by(username=username)
 
         if query.count():
             user = query.first()
             user.last_login = datetime.now()
+            if user.pubkey != key:
+                user.pubkey = key
         else:
-            user = self.AllUsers(username)
-            self.session.add(user)
-            self.session.commit()
-            user_message_history = self.UsersMessagesHistory(user.id)
-            self.session.add(user_message_history)
+            raise ValueError('Пользователь не зарегистрирован.')
 
         new_active_user = self.ActiveUsers(user.id, address, port, datetime.now())
         self.session.add(new_active_user)
@@ -134,8 +155,9 @@ class ServerDatabase:
         owner = self.session.query(self.AllUsers).filter_by(username=owner).first()
         contact = self.session.query(self.AllUsers).filter_by(username=contact).first()
 
-        if not contact or not owner or self.session.query(self.UsersContacts).filter_by(owner=owner.id,
-                                                                                        contact=contact.id).count():
+        if not contact or not owner \
+                or self.session.query(self.UsersContacts).filter_by(owner=owner.id,
+                                                                    contact=contact.id).count():
             return
 
         instance = self.UsersContacts(owner.id, contact.id)
@@ -157,10 +179,23 @@ class ServerDatabase:
         self.session.commit()
 
     def user_logout(self, username):
-
         user = self.session.query(self.AllUsers).filter_by(username=username).first()
         self.session.query(self.ActiveUsers).filter_by(user=user.id).delete()
         self.session.commit()
+
+    def get_hash(self, username):
+        user_instance = self.session.query(self.AllUsers).filter_by(username=username).first()
+        return user_instance.password_hash
+
+    def get_pubkey(self, username):
+        user_instance = self.session.query(self.AllUsers).filter_by(username=username).first()
+        return user_instance.pubkey
+
+    def check_user(self, username):
+        if self.session.query(self.AllUsers).filter_by(username=username).count():
+            return True
+        else:
+            return False
 
     def get_contacts(self, owner):
         owner = self.session.query(self.AllUsers).filter_by(username=owner).one()
