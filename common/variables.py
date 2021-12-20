@@ -32,6 +32,9 @@ MESSAGE = 'message'
 MESSAGE_TEXT = 'mess_text'
 EXIT = 'exit'
 DESTINATION = 'destination'
+DATA = 'bin'
+PUBLIC_KEY_REQUEST = 'pubkey_need'
+PUBLIC_KEY = 'pubkey'
 
 # Прочие ключи, используемые в протоколе
 PRESENCE = 'presence'
