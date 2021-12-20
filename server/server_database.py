@@ -105,18 +105,18 @@ class ServerDatabase:
         self.session.add(user_instance)
         self.session.commit()
 
-        user_messages_instance = self.UsersMessagesHistory(username.id)
+        user_messages_instance = self.UsersMessagesHistory(user_instance.id)
         self.session.add(user_messages_instance)
         self.session.commit()
 
     def remove_user(self, username):
-        instance = self.session.query(self.AllUsers).filter_by(username=username).first()
-        self.session.query(self.ActiveUsers).filter_by(user=instance.id).delete()
-        self.session.query(self.LoginHistory).filter_by(user=instance.id).delete()
-        self.session.query(self.UsersContacts).filter_by(owner=instance.id).delete()
-        self.session.query(self.UsersContacts).filter_by(contact=instance.id).delete()
-        self.session.query(self.UsersMessagesHistory).filter_by(user=instance.id).delete()
-        self.session.query(self.AllUsers).filter_by(username=instance.id).delete()
+        user = self.session.query(self.AllUsers).filter_by(username=username).first()
+        self.session.query(self.ActiveUsers).filter_by(user=user.id).delete()
+        self.session.query(self.LoginHistory).filter_by(user=user.id).delete()
+        self.session.query(self.UsersContacts).filter_by(owner=user.id).delete()
+        self.session.query(self.UsersContacts).filter_by(contact=user.id).delete()
+        self.session.query(self.UsersMessagesHistory).filter_by(user=user.id).delete()
+        self.session.query(self.AllUsers).filter_by(username=username).delete()
         self.session.commit()
 
     def user_login(self, username, address, port, key):
