@@ -83,7 +83,7 @@ class ConfigurationWindow(QDialog):
             self.settings['SETTINGS']['Listen_address'] = self.address.text()
             if 1023 < port < 65536:
                 self.settings['SETTINGS']['Default_port'] = str(port)
-                with open('server.ini', 'w') as conf:
+                with open('server/server.ini', 'w') as conf:
                     self.settings.write(conf)
                     message.information(self, 'Successful', 'Настройки успешно сохранены!')
             else:
