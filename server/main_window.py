@@ -5,7 +5,7 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget, QDialog,
                              QFileDialog, QGridLayout, QHBoxLayout, QLabel,
                              QLineEdit, QMainWindow, QPushButton, QSizePolicy,
-                             QTableView, QVBoxLayout, QWidget, qApp, QMenu)
+                             QTableView, QVBoxLayout, QWidget, qApp, QMenu, QHeaderView)
 
 from server.history_window import HistoryWindow
 from server.configuration_window import ConfigurationWindow
@@ -59,14 +59,14 @@ class MainWindow(QMainWindow):
         self.label = QLabel('Список подключенных клиентов:', self)
         self.label.adjustSize()
 
-        self.active_clients_table = QTableView(self)
+        self.active_users_table = QTableView(self)
 
         window = QWidget()
 
         verticalLayout = QVBoxLayout()
         horizontalLayout = QHBoxLayout()
 
-        horizontalLayout.addWidget(self.active_clients_table)
+        horizontalLayout.addWidget(self.active_users_table)
         verticalLayout.addWidget(self.label)
         verticalLayout.addLayout(horizontalLayout)
 
@@ -106,7 +106,14 @@ class MainWindow(QMainWindow):
             time.setEditable(False)
 
             model.appendRow([username, address, port, time])
-        return model
+
+        self.active_users_table.setModel(model)
+        self.active_users_table_headers = self.active_users_table.horizontalHeader()
+        self.active_users_table_headers.setSectionResizeMode(0, QHeaderView.Stretch)
+        self.active_users_table_headers.setSectionResizeMode(1, QHeaderView.Stretch)
+        self.active_users_table_headers.setSectionResizeMode(2, QHeaderView.Stretch)
+        self.active_users_table_headers.setSectionResizeMode(3, QHeaderView.Stretch)
+
 
     def show_history(self):
         global history_window
