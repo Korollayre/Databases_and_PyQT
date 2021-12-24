@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import (QDialog, QFileDialog, QGridLayout, QLabel, QLineEdit,
-                             QPushButton, QSizePolicy, QMessageBox)
+from PyQt5.QtWidgets import (QDialog, QFileDialog, QGridLayout, QLabel,
+                             QLineEdit, QMessageBox, QPushButton, QSizePolicy)
 
 
 class ConfigurationWindow(QDialog):

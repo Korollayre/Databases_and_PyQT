@@ -8,9 +8,9 @@ import time
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
+from common.errors import ReqFieldMissingError, ServerError
 from common.utils import get_message, send_message
 from common.variables import *
-from common.errors import ReqFieldMissingError, ServerError
 
 CLIENT_LOGGER = logging.getLogger('client')
 

@@ -27,8 +27,8 @@ class Log:
 
 def login_required(func):
     def checker(*args, **kwargs):
-        from server.core import MessageProcessor
         from common.variables import ACTION, PRESENCE
+        from server.core import MessageProcessor
         if isinstance(args[0], MessageProcessor):
             found = False
             for arg in args:

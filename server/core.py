@@ -1,24 +1,16 @@
-import argparse
 import binascii
-import configparser
 import hmac
 import os
 import select
 import socket
-import sys
 from json import JSONDecodeError
-from threading import Lock, Thread
+from threading import Thread
 
-from PyQt5.QtCore import QSortFilterProxyModel, QTimer
-from PyQt5.QtWidgets import QApplication, QHeaderView, QMessageBox
-
-from common.utils import get_message, send_message
-from common.variables import *
-from common.decos import Log, login_required
+from common.decos import login_required
 from common.descriptors import AddressVerifier, PortVerifier
 from common.metaclasses import ServerVerifier
-from server.server_database import ServerDatabase
-from server.main_window import (ConfigurationWindow, HistoryWindow, MainWindow,)
+from common.utils import get_message, send_message
+from common.variables import *
 
 SERVER_LOGGER = logging.getLogger('server')
 

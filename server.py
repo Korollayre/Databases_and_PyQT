@@ -2,22 +2,16 @@
 import argparse
 import configparser
 import os
-import select
-import socket
 import sys
-from threading import Lock, Thread
 
-from PyQt5.QtCore import QSortFilterProxyModel, QTimer, Qt
-from PyQt5.QtWidgets import QApplication, QHeaderView, QMessageBox
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication
 
-from common.utils import get_message, send_message
-from common.variables import *
 from common.decos import Log
-from common.descriptors import AddressVerifier, PortVerifier
-from common.metaclasses import ServerVerifier
-from server.server_database import ServerDatabase
+from common.variables import *
 from server.core import MessageProcessor
-from server.main_window import (ConfigurationWindow, HistoryWindow, MainWindow)
+from server.main_window import MainWindow
+from server.server_database import ServerDatabase
 
 SERVER_LOGGER = logging.getLogger('server')
 

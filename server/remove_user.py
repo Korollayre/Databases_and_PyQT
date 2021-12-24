@@ -1,11 +1,8 @@
-import sys
-
 from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
-from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget, QDialog,
-                             QFileDialog, QGridLayout, QHBoxLayout, QLabel,
-                             QLineEdit, QMainWindow, QPushButton, QSizePolicy,
-                             QTableView, QVBoxLayout, QWidget, qApp, QHeaderView, QMessageBox, QListView)
+from PyQt5.QtWidgets import (QDialog, QHBoxLayout, QHeaderView, QLineEdit,
+                             QMessageBox, QPushButton, QSizePolicy, QTableView,
+                             QVBoxLayout)
 
 
 class RemoveUser(QDialog):

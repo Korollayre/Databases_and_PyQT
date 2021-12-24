@@ -1,8 +1,7 @@
 from PyQt5.QtCore import QSortFilterProxyModel
 from PyQt5.QtGui import QStandardItem, QStandardItemModel
-from PyQt5.QtWidgets import (QDialog,
-                             QHBoxLayout, QLineEdit, QPushButton, QSizePolicy,
-                             QTableView, QVBoxLayout, QHeaderView)
+from PyQt5.QtWidgets import (QDialog, QHBoxLayout, QHeaderView, QLineEdit,
+                             QPushButton, QSizePolicy, QTableView, QVBoxLayout)
 
 
 class HistoryWindow(QDialog):

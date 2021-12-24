@@ -1,12 +1,10 @@
 import binascii
 import hashlib
-import sys
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QApplication, QDialog,
-                             QGridLayout, QHBoxLayout, QLabel,
-                             QLineEdit, QPushButton, QSizePolicy,
-                             QVBoxLayout, QMessageBox)
+from PyQt5.QtWidgets import (QDialog, QGridLayout, QHBoxLayout, QLabel,
+                             QLineEdit, QMessageBox, QPushButton, QSizePolicy,
+                             QVBoxLayout)
 
 
 class RegisterUser(QDialog):

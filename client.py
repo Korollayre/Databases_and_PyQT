@@ -9,9 +9,9 @@ from client.client_database import ClientDatabase
 from client.main_window import MainWindow
 from client.transport import ClientTransport
 from client.welcome_window import WelcomeWindow
-from common.variables import *
 from common.decos import Log
 from common.errors import ServerError
+from common.variables import *
 
 CLIENT_LOGGER = logging.getLogger('client')
 

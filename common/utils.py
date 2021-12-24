@@ -1,9 +1,9 @@
 """Утилиты"""
 import json
 
-from common.variables import ENCODING, MAX_PACKAGE_LENGTH
 from common.decos import Log
 from common.errors import IncorrectDataRecivedError, NonDictInputError
+from common.variables import ENCODING, MAX_PACKAGE_LENGTH
 
 
 @Log()

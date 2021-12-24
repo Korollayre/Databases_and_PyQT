@@ -1,15 +1,12 @@
-import sys
-
-from PyQt5.QtGui import QStandardItem, QStandardItemModel
 from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import (QAction, QApplication, QDesktopWidget, QDialog,
-                             QFileDialog, QGridLayout, QHBoxLayout, QLabel,
-                             QLineEdit, QMainWindow, QPushButton, QSizePolicy,
-                             QTableView, QVBoxLayout, QWidget, qApp, QMenu, QHeaderView)
+from PyQt5.QtGui import QStandardItem, QStandardItemModel
+from PyQt5.QtWidgets import (QAction, QDesktopWidget, QHBoxLayout, QHeaderView,
+                             QLabel, QMainWindow, QMenu, QTableView,
+                             QVBoxLayout, QWidget, qApp)
 
-from server.history_window import HistoryWindow
-from server.configuration_window import ConfigurationWindow
 from server.add_user import RegisterUser
+from server.configuration_window import ConfigurationWindow
+from server.history_window import HistoryWindow
 from server.remove_user import RemoveUser
 
 

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import (Column, DateTime, ForeignKey, Integer, MetaData,
-                        String, Table, create_engine, Text)
+                        String, Table, Text, create_engine)
 from sqlalchemy.orm import mapper, sessionmaker
 from tabulate import tabulate
 
