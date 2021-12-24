@@ -1,21 +1,29 @@
+import base64
+import json
 import logging
 
+from Cryptodome.Cipher import PKCS1_OAEP
+from Cryptodome.PublicKey import RSA
 from PyQt5.QtCore import QEvent, QSortFilterProxyModel, Qt, pyqtSlot
 from PyQt5.QtGui import QIcon, QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import QAction, QMainWindow, QMenu, QMessageBox
 
 from client.main_window_conv import Ui_MainClientWindow
 from common.errors import ServerError
+from common.variables import MESSAGE_TEXT, SENDER
 
 CLIENT_LOGGER = logging.getLogger('client')
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, database, transport):
+    def __init__(self, database, transport, keys):
         super(MainWindow, self).__init__()
 
         self.database = database
         self.transport = transport
+        self.keys = keys
+
+        self.decrypter = PKCS1_OAEP.new(keys)
 
         self.initUI()
 
@@ -38,6 +46,7 @@ class MainWindow(QMainWindow):
         self.contacts_model = None
         self.messages_history_model = None
         self.current_chat = None
+        self.encryptor = None
 
         self.messages = QMessageBox()
         self.ui.messages_list.setWordWrap(True)
@@ -82,7 +91,7 @@ class MainWindow(QMainWindow):
                 contact_item = source.currentIndex().data()
                 if contact_item:
                     self.remove_contact_action.triggered.connect(lambda: self.remove_contact(contact_item))
-                    self.add_contact_action.trigger()
+                    self.remove_contact_action.trigger()
             return True
 
         return super().eventFilter(source, event)
@@ -94,27 +103,31 @@ class MainWindow(QMainWindow):
         if self.messages_history_model:
             self.messages_history_model.clear()
 
+        self.encryptor = None
+        self.current_chat = None
+        self.current_chat_key = None
+
         self.ui.send_button.setDisabled(True)
         self.ui.message_input.setDisabled(True)
 
     def laod_message_history(self):
         input_messages = self.database.get_user_messages_history(sender=self.transport.username,
                                                                  receiver=self.current_chat)
-        output_messages = self.database.get_user_messages_history(receiver=self.transport.username,
-                                                                  sender=self.current_chat)
+        output_messages = self.database.get_user_messages_history(sender=self.current_chat,
+                                                                  receiver=self.transport.username)
 
         input_messages.extend(output_messages)
+
+        if not self.messages_history_model:
+            self.messages_history_model = QStandardItemModel()
+            self.ui.messages_list.setModel(self.messages_history_model)
+
+        self.messages_history_model.clear()
 
         if not input_messages:
             pass
         else:
             messages_list = sorted(input_messages, key=lambda message_time: message_time[3])
-
-            if not self.messages_history_model:
-                self.messages_history_model = QStandardItemModel()
-                self.ui.messages_list.setModel(self.messages_history_model)
-
-            self.messages_history_model.clear()
 
             length = len(messages_list)
             start_index = 0
@@ -125,13 +138,13 @@ class MainWindow(QMainWindow):
                 item = messages_list[i]
                 if item[1] == self.transport.username:
                     row = QStandardItem(
-                        f'{self.transport.username} {item[3].strftime("%H:%M")}\n{item[2]}')
+                        f'{self.current_chat} {item[3].strftime("%H:%M")}\n{item[2]}')
                     row.setEditable(False)
                     row.setTextAlignment(Qt.AlignRight)
                     self.messages_history_model.appendRow(row)
                 else:
                     row = QStandardItem(
-                        f'{self.current_chat} {item[3].strftime("%H:%M")}\n{item[2]}')
+                        f'{self.transport.username} {item[3].strftime("%H:%M")}\n{item[2]}')
                     row.setEditable(False)
                     row.setTextAlignment(Qt.AlignLeft)
                     self.messages_history_model.appendRow(row)
@@ -147,6 +160,19 @@ class MainWindow(QMainWindow):
         self.set_active_chat()
 
     def set_active_chat(self):
+        try:
+            self.current_chat_key = self.transport.user_key_request(self.current_chat)
+            CLIENT_LOGGER.info(f'Загружен открытый ключ пользователя {self.current_chat}')
+            if self.current_chat_key:
+                self.encryptor = PKCS1_OAEP.new(RSA.import_key(self.current_chat_key))
+        except (OSError, json.JSONDecodeError):
+            self.current_chat_key = None
+            self.encryptor = None
+            CLIENT_LOGGER.debug(f'Не удалось получить ключ для {self.current_chat}')
+
+        if not self.current_chat_key:
+            self.messages.warning(self, 'Ошибка', 'Ошибка сервера.')
+
         self.ui.converasation_label.setText(f'{self.current_chat}')
         self.ui.message_input.setPlaceholderText('Введите сообщение')
 
@@ -236,8 +262,11 @@ class MainWindow(QMainWindow):
         self.ui.message_input.clear()
         if not message_text:
             return
+        message_text_encrypted = self.encryptor.encrypt(message_text.encode('utf8'))
+        message_text_encrypted_base64 = base64.b64encode(message_text_encrypted)
+
         try:
-            self.transport.create_user_message(self.current_chat, message_text)
+            self.transport.create_user_message(self.current_chat, message_text_encrypted_base64.decode('ascii'))
         except ServerError as error:
             self.messages.critical(self, 'Ошибка', error.text)
         except OSError as error:
@@ -253,22 +282,39 @@ class MainWindow(QMainWindow):
             CLIENT_LOGGER.debug(f'Отправлено сообщение {message_text} пользователю {self.current_chat}.')
             self.laod_message_history()
 
-    @pyqtSlot(str)
-    def message_receive(self, sender):
-        if sender == self.current_chat:
+    @pyqtSlot(dict)
+    def message_receive(self, message):
+        encrypted_message = base64.b64decode(message[MESSAGE_TEXT])
+        try:
+            decrypted_message = self.decrypter.decrypt(encrypted_message)
+        except (ValueError, TypeError):
+            self.messages.warning(self, 'Ошибка', 'Не удалось декодировать сообщение.')
+            return
+
+        self.database.save_user_message(message[SENDER], self.transport.username, decrypted_message.decode('utf8'))
+
+        if message[SENDER] == self.current_chat:
             self.laod_message_history()
         else:
             if self.messages.question(self, 'Новое сообщение',
-                                      f'Получено новое сообщение от пользователя {sender}. Открыть чат с ним?',
+                                      f'Получено новое сообщение от пользователя {message[SENDER]}. Открыть чат с ним?',
                                       QMessageBox.Yes, QMessageBox.No) == QMessageBox.Yes:
-                self.current_chat = sender
+                self.current_chat = message[SENDER]
                 self.set_active_chat()
 
     @pyqtSlot()
     def connection_lost(self):
         self.messages.warning(self, 'Сбой соединения', 'Потеряно соединение с сервером. ')
-
         self.close()
+
+    @pyqtSlot()
+    def update_lists(self):
+        if self.current_chat and not self.database.check_user_in_active(self.current_chat):
+            self.messages.warning(self, 'Ошибка', 'Пользователь не найден.')
+            self.set_input_disable()
+            self.current_chat = None
+        self.users_list_update()
+        self.contacts_list_update()
 
     def make_connection(self, trans_obj):
         trans_obj.new_message_signal.connect(self.message_receive)
