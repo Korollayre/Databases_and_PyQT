@@ -67,7 +67,6 @@ class ClientTransport(threading.Thread, QObject):
                 and MESSAGE_TEXT in response and DESTINATION in response and \
                 response[DESTINATION] == self.username:
             CLIENT_LOGGER.info(f'Получено сообщение {response[MESSAGE_TEXT]} от пользователя {response[SENDER]}')
-            # self.database.save_user_message(response[SENDER], self.username, response[MESSAGE_TEXT])
             self.new_message_signal.emit(response)
 
     def connection_init(self, port, address):
@@ -114,19 +113,18 @@ class ClientTransport(threading.Thread, QObject):
             CLIENT_LOGGER.info(f'Генерация запроса {PRESENCE} пользователя {self.username}')
 
             try:
-                with sock_lock:
-                    send_message(self.transport, request)
-                    server_answer = get_message(self.transport)
-                    if RESPONSE in server_answer:
-                        if server_answer[RESPONSE] == 400:
-                            raise ServerError(f'400: {server_answer[ERROR]}')
-                        elif server_answer[RESPONSE] == 511:
-                            data = server_answer[DATA]
-                            current_hash = hmac.new(password_hash_string, data.encode('utf-8'), 'MD5')
-                            digest = current_hash.digest()
-                            send_message(self.transport, {RESPONSE: 511,
-                                                          DATA: binascii.b2a_base64(digest).decode('ascii')})
-                            self.parsing_server_response(get_message(self.transport))
+                send_message(self.transport, request)
+                server_answer = get_message(self.transport)
+                if RESPONSE in server_answer:
+                    if server_answer[RESPONSE] == 400:
+                        raise ServerError(f'400: {server_answer[ERROR]}')
+                    elif server_answer[RESPONSE] == 511:
+                        data = server_answer[DATA]
+                        current_hash = hmac.new(password_hash_string, data.encode('utf-8'), 'MD5')
+                        digest = current_hash.digest()
+                        send_message(self.transport, {RESPONSE: 511,
+                                                      DATA: binascii.b2a_base64(digest).decode('ascii')})
+                        self.parsing_server_response(get_message(self.transport))
             except OSError:
                 CLIENT_LOGGER.critical('Потеряно соединение с сервером.')
                 raise ServerError('Потеряно соединение с сервером.')
@@ -241,7 +239,6 @@ class ClientTransport(threading.Thread, QObject):
         CLIENT_LOGGER.info('Запущен процесс-приёмник сообщений сервера.')
         while self.running:
             time.sleep(1)
-            response = None
             with sock_lock:
                 try:
                     self.transport.settimeout(0.5)
@@ -260,7 +257,3 @@ class ClientTransport(threading.Thread, QObject):
                     self.parsing_server_response(response)
                 finally:
                     self.transport.settimeout(5)
-
-            if response:
-                CLIENT_LOGGER.info(f'Принято сообщение с сервера - {response}')
-                self.parsing_server_response(response)
