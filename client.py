@@ -51,47 +51,48 @@ def main():
         else:
             sys.exit(0)
 
-    CLIENT_LOGGER.info(f'Запущен клиент со следующими параметрами: '
-                       f'адрес - {request_address}, порт - {request_port}, имя - {request_name}')
+    if request_name and request_password:
+        CLIENT_LOGGER.info(f'Запущен клиент со следующими параметрами: '
+                           f'адрес - {request_address}, порт - {request_port}, имя - {request_name}')
 
-    dir_path = os.path.dirname(os.path.realpath(__file__)) + '/client'
-    key_file = os.path.join(dir_path, '{client_name}.key')
-    if not os.path.exists(key_file):
-        keys = RSA.generate(2048, os.urandom)
-        with open(key_file, 'wb') as key:
-            key.write(keys.export_key())
-    else:
-        with open(key_file, 'rb') as key:
-            keys = RSA.import_key(key.read())
+        dir_path = os.path.dirname(os.path.realpath(__file__)) + '\\client'
+        key_file = os.path.join(dir_path, f'{request_name}.key')
+        if not os.path.exists(key_file):
+            keys = RSA.generate(2048, os.urandom)
+            with open(key_file, 'wb') as key:
+                key.write(keys.export_key())
+        else:
+            with open(key_file, 'rb') as key:
+                keys = RSA.import_key(key.read())
 
-    CLIENT_LOGGER.info('Ключи успешно загружены.')
+        CLIENT_LOGGER.info('Ключи успешно загружены.')
 
-    database = ClientDatabase(request_name)
+        database = ClientDatabase(request_name)
 
-    try:
-        client_transport = ClientTransport(request_port,
-                                           request_address,
-                                           database,
-                                           request_name,
-                                           request_password,
-                                           keys)
-    except ServerError as error:
-        message = QMessageBox()
-        message.critical(welcome_window, 'Ошибка сервера', error.text)
-        CLIENT_LOGGER.critical(f'Сервер вернул ошибку - {error.text()}')
-        sys.exit(1)
+        try:
+            client_transport = ClientTransport(request_port,
+                                               request_address,
+                                               database,
+                                               request_name,
+                                               request_password,
+                                               keys)
+        except ServerError as error:
+            message = QMessageBox()
+            message.critical(welcome_window, 'Ошибка сервера', error.text)
+            CLIENT_LOGGER.critical(f'Сервер вернул ошибку - {error.text()}')
+            sys.exit(1)
 
-    del welcome_window
+        del welcome_window
 
-    client_transport.setDaemon(True)
-    client_transport.start()
+        client_transport.setDaemon(True)
+        client_transport.start()
 
-    main_window = MainWindow(database, client_transport, keys)
-    main_window.make_connection(client_transport)
-    app.exec_()
+        main_window = MainWindow(database, client_transport, keys)
+        main_window.make_connection(client_transport)
+        app.exec_()
 
-    client_transport.transport_shutdown()
-    client_transport.join()
+        client_transport.transport_shutdown()
+        client_transport.join()
 
 
 if __name__ == '__main__':
