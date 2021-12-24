@@ -86,7 +86,7 @@ def main():
     client_transport.setDaemon(True)
     client_transport.start()
 
-    main_window = MainWindow(database, client_transport)
+    main_window = MainWindow(database, client_transport, keys)
     main_window.make_connection(client_transport)
     app.exec_()
 
