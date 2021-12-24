@@ -22,8 +22,11 @@ class WelcomeWindow(QDialog):
         self.setFixedSize(230, 100)
 
         self.username_label = QLabel('Введите имя пользователя:', self)
+        self.user_password_label = QLabel('Введите пароль:', self)
 
         self.username_filed = QLineEdit(self)
+        self.user_password = QLineEdit(self)
+        self.user_password.setEchoMode(QLineEdit.Password)
 
         self.close_button = QPushButton('Выйти', self)
         self.close_button.clicked.connect(qApp.exit)
@@ -38,6 +41,8 @@ class WelcomeWindow(QDialog):
 
         mainLayout.addWidget(self.username_label)
         mainLayout.addWidget(self.username_filed)
+        mainLayout.addWidget(self.user_password_label)
+        mainLayout.addWidget(self.user_password)
 
         buttonLayout.addWidget(self.enter_button)
         buttonLayout.addWidget(self.close_button)
