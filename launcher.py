@@ -1,24 +1,30 @@
 import subprocess
 
-PROCESSES = []
 
-while True:
-    ACTION = input("Для запуска сервера и клиентов введите 's', для выхода - 'q', для закрытия всех окон 'x': ")
+def main():
+    process = []
+    venv_path = '../venv/Scripts/python'
+    while True:
+        ACTION = input("Для запуска сервера и клиентов введите 's', для выхода - 'q', для закрытия всех окон 'x': ")
 
-    if ACTION == 'q':
-        break
-    elif ACTION == 's':
-        users = int(input('Введите количество клиентов для запуска: '))
+        if ACTION == 'q':
+            break
+        elif ACTION == 's':
+            # users = int(input('Введите количество клиентов для запуска: '))
 
-        PROCESSES.append(subprocess.Popen('python server.py',
-                                          creationflags=subprocess.CREATE_NEW_CONSOLE))
+            process.append(
+                subprocess.Popen(f'{venv_path} server.py', creationflags=subprocess.CREATE_NO_WINDOW))
 
-        for i in range(users):
-            PROCESSES.append(
-                subprocess.Popen(f'python client.py --name test{i + 1}',
-                                 creationflags=subprocess.CREATE_NEW_CONSOLE))
+            for i in range(3):
+                process.append(
+                    subprocess.Popen(f'{venv_path} client.py -n test{i + 1} -p password',
+                                     creationflags=subprocess.CREATE_NO_WINDOW))
 
-    elif ACTION == 'x':
-        while PROCESSES:
-            VICTIM = PROCESSES.pop()
-            VICTIM.kill()
+        elif ACTION == 'x':
+            while process:
+                victim = process.pop()
+                victim.kill()
+
+
+if __name__ == '__main__':
+    main()
