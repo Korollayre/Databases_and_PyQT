@@ -1,3 +1,6 @@
+import binascii
+import hashlib
+import hmac
 import json
 import socket
 import threading
@@ -15,15 +18,18 @@ sock_lock = threading.Lock()
 
 
 class ClientTransport(threading.Thread, QObject):
-    new_message_signal = pyqtSignal(str)
+    new_message_signal = pyqtSignal(dict)
+    message_205 = pyqtSignal()
     connection_lost_signal = pyqtSignal()
 
-    def __init__(self, port, address, database, username):
+    def __init__(self, port, address, database, username, password, keys):
         threading.Thread.__init__(self)
         QObject.__init__(self)
 
         self.database = database
         self.username = username
+        self.password = password
+        self.keys = keys
 
         self.transport = None
 
@@ -42,17 +48,6 @@ class ClientTransport(threading.Thread, QObject):
             raise ServerError('Не удалось декодировать сообщение сервера.')
         self.running = True
 
-    def user_request(self):
-        user_data = {
-            ACTION: PRESENCE,
-            TIME: time.time(),
-            USER: {
-                ACCOUNT_NAME: self.username
-            }
-        }
-        CLIENT_LOGGER.info(f'Генерация запроса {PRESENCE} пользователя {self.username}')
-        return user_data
-
     def parsing_server_response(self, response):
         CLIENT_LOGGER.info(f'Принят ответ сервера')
         if RESPONSE in response:
@@ -60,6 +55,10 @@ class ClientTransport(threading.Thread, QObject):
                 return
             elif response[RESPONSE] == 400:
                 raise ServerError(f'400 : {response[ERROR]}')
+            elif response[RESPONSE] == 205:
+                self.users_list_request()
+                self.contacts_list_request()
+                self.message_205.emit()
             else:
                 CLIENT_LOGGER.error(f'Принят неизвестный код подтверждения {response[RESPONSE]}')
                 raise ReqFieldMissingError(RESPONSE)
@@ -68,8 +67,8 @@ class ClientTransport(threading.Thread, QObject):
                 and MESSAGE_TEXT in response and DESTINATION in response and \
                 response[DESTINATION] == self.username:
             CLIENT_LOGGER.info(f'Получено сообщение {response[MESSAGE_TEXT]} от пользователя {response[SENDER]}')
-            self.database.save_user_message(response[SENDER], self.username, response[MESSAGE_TEXT])
-            self.new_message_signal.emit(response[SENDER])
+            # self.database.save_user_message(response[SENDER], self.username, response[MESSAGE_TEXT])
+            self.new_message_signal.emit(response)
 
     def connection_init(self, port, address):
         connected = False
@@ -92,16 +91,48 @@ class ClientTransport(threading.Thread, QObject):
             CLIENT_LOGGER.critical('Не удалось установить соединение с сервером.')
             raise ServerError('Не удалось установить соединение с сервером.')
 
-        try:
-            with sock_lock:
-                send_message(self.transport, self.user_request())
-                self.parsing_server_response(get_message(self.transport))
-        except OSError:
-            CLIENT_LOGGER.critical('Потеряно соединение с сервером!')
-            raise ServerError('Потеряно соединение с сервером!')
-        except json.JSONDecodeError:
-            CLIENT_LOGGER.error('Не удалось декодировать сообщение сервера.')
-            raise ServerError('Не удалось декодировать сообщение сервера.')
+        CLIENT_LOGGER.info('Запуск процесса авторизации.')
+
+        password_bytes = self.password.encode('utf-8')
+        salt = self.username.lower().encode('utf-8')
+        password_hash = hashlib.pbkdf2_hmac('sha512', password_bytes, salt, 10000)
+        password_hash_string = binascii.hexlify(password_hash)
+
+        CLIENT_LOGGER.info(f'Создан хеш - {password_hash_string}')
+
+        pubkey = self.keys.publickey().export_key().decode('ascii')
+
+        with sock_lock:
+            request = {
+                ACTION: PRESENCE,
+                TIME: time.time(),
+                USER: {
+                    ACCOUNT_NAME: self.username,
+                    PUBLIC_KEY: pubkey
+                }
+            }
+            CLIENT_LOGGER.info(f'Генерация запроса {PRESENCE} пользователя {self.username}')
+
+            try:
+                with sock_lock:
+                    send_message(self.transport, request)
+                    server_answer = get_message(self.transport)
+                    if RESPONSE in server_answer:
+                        if server_answer[RESPONSE] == 400:
+                            raise ServerError(f'400: {server_answer[ERROR]}')
+                        elif server_answer[RESPONSE] == 511:
+                            data = server_answer[DATA]
+                            current_hash = hmac.new(password_hash_string, data.encode('utf-8'), 'MD5')
+                            digest = current_hash.digest()
+                            send_message(self.transport, {RESPONSE: 511,
+                                                          DATA: binascii.b2a_base64(digest).decode('ascii')})
+                            self.parsing_server_response(get_message(self.transport))
+            except OSError:
+                CLIENT_LOGGER.critical('Потеряно соединение с сервером.')
+                raise ServerError('Потеряно соединение с сервером.')
+            except json.JSONDecodeError:
+                CLIENT_LOGGER.error('Не удалось декодировать сообщение сервера.')
+                raise ServerError('Не удалось декодировать сообщение сервера.')
 
         CLIENT_LOGGER.info('Соединение с сервером установлено.')
 
@@ -136,13 +167,13 @@ class ClientTransport(threading.Thread, QObject):
         else:
             CLIENT_LOGGER.error(f'Не удалось обновить список контактов пользователя {self.username}.')
 
-    def add_contact_to_server(self, contact):
-        CLIENT_LOGGER.info(f'Запрос на добавление в контакты пользователя {contact} пользователем {self.username}')
+    def add_contact_to_server(self, user):
+        CLIENT_LOGGER.info(f'Запрос на добавление в контакты пользователя {user} пользователем {self.username}')
         request = {
             ACTION: ADD_CONTACT,
             TIME: time.time(),
             USER: self.username,
-            ACCOUNT_NAME: contact,
+            ACCOUNT_NAME: user,
         }
         with sock_lock:
             send_message(self.transport, request)
@@ -176,6 +207,21 @@ class ClientTransport(threading.Thread, QObject):
             self.parsing_server_response(get_message(self.transport))
             CLIENT_LOGGER.info(f'Сообщение {user_message} пользователю {receiver} отправлено.')
 
+    def user_key_request(self, username):
+        CLIENT_LOGGER.info(f'Запрос публичного ключа пользователя {username}')
+        request = {
+            ACTION: PUBLIC_KEY_REQUEST,
+            TIME: time.time(),
+            ACCOUNT_NAME: username,
+        }
+        with sock_lock:
+            send_message(self.transport, request)
+            server_answer = get_message(self.transport)
+        if RESPONSE in server_answer and server_answer[RESPONSE] == 511:
+            return server_answer[DATA]
+        else:
+            CLIENT_LOGGER.error(f'Не удалось получить публичный ключ пользователя {username}.')
+
     def transport_shutdown(self):
         self.running = False
         message = {
@@ -194,7 +240,8 @@ class ClientTransport(threading.Thread, QObject):
     def run(self):
         CLIENT_LOGGER.info('Запущен процесс-приёмник сообщений сервера.')
         while self.running:
-            time.sleep(2)
+            time.sleep(1)
+            response = None
             with sock_lock:
                 try:
                     self.transport.settimeout(0.5)
@@ -213,3 +260,7 @@ class ClientTransport(threading.Thread, QObject):
                     self.parsing_server_response(response)
                 finally:
                     self.transport.settimeout(5)
+
+            if response:
+                CLIENT_LOGGER.info(f'Принято сообщение с сервера - {response}')
+                self.parsing_server_response(response)
