@@ -19,7 +19,7 @@ class WelcomeWindow(QDialog):
         self.message.setWindowTitle('Ошибка!')
         self.message.setText('Вы не ввели имя пользователя!')
 
-        self.setFixedSize(230, 100)
+        self.setFixedSize(230, 150)
 
         self.username_label = QLabel('Введите имя пользователя:', self)
         self.user_password_label = QLabel('Введите пароль:', self)
