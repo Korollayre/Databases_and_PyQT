@@ -81,8 +81,9 @@ class ClientDatabase:
     def init_active_users(self, users_list):
         """
         Метод, заполняющий таблицу известных пользователей.
-        :param users_list:
-        :return:
+
+        :param users_list: список известных пользователей, полученный с сервера.
+        :return: ничего не возвращает.
         """
         self.session.query(self.KnownUsers).delete()
         for user in users_list:
@@ -93,15 +94,17 @@ class ClientDatabase:
     def get_active_users(self):
         """
         Метод, возвращающий список всех известных пользователей.
-        :return:
+
+        :return: список всех известных пользователей.
         """
         return [user[0] for user in self.session.query(self.KnownUsers.username).all()]
 
     def check_user_in_active(self, username):
         """
         Метод, проверяющий существование пользователя.
-        :param username:
-        :return:
+
+        :param username: пользователь, проверяющийся на существование.
+        :return: True или False (в зависимости от результат).
         """
         if self.session.query(self.KnownUsers).filter_by(username=username).count():
             return True
@@ -110,9 +113,10 @@ class ClientDatabase:
 
     def add_contact(self, contact):
         """
-        Метод, добавляющий пользователя в базу данных.
-        :param contact:
-        :return:
+        Метод, добавляющий контакт в базу данных.
+
+        :param contact: пользователь, которого необходимо добавить в контакты.
+        :return: ничего не возвращает.
         """
         if not self.session.query(self.UserContacts).filter_by(contact=contact).count():
             contact_instance = self.UserContacts(contact)
@@ -122,8 +126,9 @@ class ClientDatabase:
     def delete_contact(self, contact):
         """
         Метод, удаляющий контакт из базы данных.
-        :param contact:
-        :return:
+
+        :param contact: пользователь, которого необходимо удалить из контактов.
+        :return: ничего не возвращает.
         """
         self.session.query(self.UserContacts).filter_by(contact=contact).delete()
         self.session.commit()
@@ -131,15 +136,17 @@ class ClientDatabase:
     def get_user_contacts(self):
         """
         Метод, возвращающий список всех контактов пользователя.
-        :return:
+
+        :return: список пользователей контакта.
         """
         return [contact[0] for contact in self.session.query(self.UserContacts.contact).all()]
 
     def check_user_contact(self, username):
         """
         Метод, проверяющий наличие пользователя в таблице контактов.
-        :param username:
-        :return:
+
+        :param username: пользователь, искомый в списке контактов.
+        :return: True или False (в зависимости от результат).
         """
         if self.session.query(self.UserContacts).filter_by(contact=username).count():
             return True
@@ -149,10 +156,11 @@ class ClientDatabase:
     def save_user_message(self, sender, receiver, message):
         """
         Метод, сохраняющий сообщение в базу данных.
-        :param sender:
-        :param receiver:
-        :param message:
-        :return:
+
+        :param sender: отправитель сообщения.
+        :param receiver: получатель сообщения.
+        :param message: сообщение.
+        :return: ничего не возвращает.
         """
         message_instance = self.UserMessagesHistory(sender, receiver, message)
         self.session.add(message_instance)
@@ -161,9 +169,10 @@ class ClientDatabase:
     def get_user_messages_history(self, sender=None, receiver=None):
         """
         Метод, возвращающий историю сообщений в соответствии с заданными параметрами.
-        :param sender:
-        :param receiver:
-        :return:
+
+        :param sender: отправитель сообщения.
+        :param receiver: получатель сообщения.
+        :return: список сообщений.
         """
         query = self.session.query(self.UserMessagesHistory)
         if sender:
