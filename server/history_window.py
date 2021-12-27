@@ -5,12 +5,16 @@ from PyQt5.QtWidgets import (QDialog, QHBoxLayout, QHeaderView, QLineEdit,
 
 
 class HistoryWindow(QDialog):
+    """
+    Класс - диалоговое окно с таблицей статистики пользователей, содержащей в себе:
+    имя пользователя, время последнего входа,
+    количество отправленных и принятых сообщений
+    """
+
     def __init__(self, database):
         super().__init__()
         self.database = database
-        self.initUI()
 
-    def initUI(self):
         self.setWindowTitle('Клиентская история')
 
         self.setMinimumHeight(300)
@@ -39,6 +43,10 @@ class HistoryWindow(QDialog):
         self.users_history_table_create()
 
     def users_history_table_create(self):
+        """
+        Метод, заполняющий таблицу статистики пользователей данными.
+        :return: ничего не возвращает.
+        """
         history = self.database.message_history()
 
         model = QStandardItemModel()
