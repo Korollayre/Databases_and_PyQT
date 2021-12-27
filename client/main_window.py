@@ -12,6 +12,8 @@ from client.main_window_conv import Ui_MainClientWindow
 from common.errors import ServerError
 from common.variables import MESSAGE_TEXT, SENDER
 
+import logs.client_log_config
+
 CLIENT_LOGGER = logging.getLogger('client')
 
 
