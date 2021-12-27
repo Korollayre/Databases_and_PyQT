@@ -58,7 +58,7 @@ class ClientTransport(threading.Thread, QObject):
         Метод, обрабатывающий сообщения сервера.
 
         :param response: сообщение сервера.
-        :return:
+        :return: ничего не возвращает.
         """
         CLIENT_LOGGER.info(f'Принят ответ сервера')
         if RESPONSE in response:
@@ -86,7 +86,7 @@ class ClientTransport(threading.Thread, QObject):
 
         :param port: порт подключения.
         :param address: адрес подключения.
-        :return:
+        :return: ничего не возвращает.
         """
         connected = False
 
@@ -156,7 +156,7 @@ class ClientTransport(threading.Thread, QObject):
         """
         Метод, обновляющий с сервера список пользователей онлайн.
 
-        :return:
+        :return: ничего не возвращает.
         """
         CLIENT_LOGGER.info(f'Запрос активных пользователей пользователем {self.username}')
         request = {
@@ -176,7 +176,7 @@ class ClientTransport(threading.Thread, QObject):
         """
         Метод, обновляющий с сервера список контактов.
 
-        :return:
+        :return: ничего не возвращает.
         """
         CLIENT_LOGGER.info(f'Запрос списка контактов пользователем {self.username}')
         request = {
@@ -196,8 +196,9 @@ class ClientTransport(threading.Thread, QObject):
     def add_contact_to_server(self, user):
         """
         Метод, отправляющий на сервер сведения о добавления контакта.
+
         :param user: пользователь, добавленный в список контактов.
-        :return:
+        :return: ничего не возвращает.
         """
         CLIENT_LOGGER.info(f'Запрос на добавление в контакты пользователя {user} пользователем {self.username}')
         request = {
@@ -213,8 +214,9 @@ class ClientTransport(threading.Thread, QObject):
     def remove_contact_from_server(self, contact):
         """
         Метод, отправляющий на сервер сведения об удалении пользователя из списка контактов.
+
         :param contact: пользователь, удаленный из списка контактов.
-        :return:
+        :return: ничего не возвращает.
         """
         CLIENT_LOGGER.info(
             f'Запрос на удаление пользователя {contact} из списка контактов пользователем {self.username}')
@@ -234,7 +236,7 @@ class ClientTransport(threading.Thread, QObject):
 
         :param receiver: получатель сообщения.
         :param message: сообщение.
-        :return:
+        :return: ничего не возвращает.
         """
         user_message = {
             ACTION: MESSAGE,
@@ -255,7 +257,7 @@ class ClientTransport(threading.Thread, QObject):
         Метод, запрашивающий с сервера публичный ключ пользователя.
 
         :param username: пользователь, чей публичный ключ запрашивается.
-        :return:
+        :return: публичный ключ указанного пользователя.
         """
         CLIENT_LOGGER.info(f'Запрос публичного ключа пользователя {username}')
         request = {
@@ -274,7 +276,8 @@ class ClientTransport(threading.Thread, QObject):
     def transport_shutdown(self):
         """
         Метод, отправляющий серверу сведения о завершение работы клиентского приложения.
-        :return:
+
+        :return: ничего не возвращает.
         """
         self.running = False
         message = {
@@ -294,7 +297,7 @@ class ClientTransport(threading.Thread, QObject):
         """
         Метод, содержащий основной цикл работы класса.
 
-        :return:
+        :return: ничего не возвращает.
         """
         CLIENT_LOGGER.info('Запущен процесс-приёмник сообщений сервера.')
         while self.running:
