@@ -37,7 +37,6 @@ class ServerVerifier(type):
     вызовов таких как: connect. Также проверяется, что серверный
     сокет является TCP и работает по IPv4 протоколу.
     """
-
     def __init__(cls, clsname, bases, clsdict):
         super().__init__(clsname, bases, clsdict)
         methods = []
@@ -45,7 +44,7 @@ class ServerVerifier(type):
         for item in clsdict:
             try:
                 func = dis.get_instructions(clsdict[item])
-            except TypeError:
+            except (TypeError, IndentationError):
                 pass
             else:
                 for el in func:
