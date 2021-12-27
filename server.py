@@ -21,8 +21,8 @@ def arg_parser(default_port, default_address):
     """
     Парсер аргументов командной строки. Возвращает кортеж из 3 элементов -
     прослушиваемые адреса, прослушиваемый порт, и флаг запуска сервера без GUI.
-    :param default_port:
-    :param default_address:
+    :param default_port: Значение прослушиваемого порта по умолчанию.
+    :param default_address: Значение прослушиваемых адресов по умолчанию.
     :return:
     """
     parser = argparse.ArgumentParser()
