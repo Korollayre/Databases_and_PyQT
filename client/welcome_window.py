@@ -9,9 +9,7 @@ class WelcomeWindow(QDialog):
     def __init__(self):
         super(WelcomeWindow, self).__init__()
         self.enter_button_pressed = False
-        self.initUI()
 
-    def initUI(self):
         self.setWindowTitle('Привет!')
 
         self.message = QMessageBox()
@@ -52,6 +50,11 @@ class WelcomeWindow(QDialog):
         self.show()
 
     def enter_button_click(self):
+        """
+        Метод-обработчик нажатия кнопки 'Войти'.
+
+        :return:
+        """
         if self.username_filed.text():
             self.enter_button_pressed = True
             qApp.exit()
