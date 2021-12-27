@@ -15,7 +15,6 @@ def get_message(client):
     :param client: сокет для передачи данных.
     :return: словарь - сообщение.
     """
-
     encoded_response = client.recv(MAX_PACKAGE_LENGTH)
     json_response = encoded_response.decode(ENCODING)
     response = json.loads(json_response)
