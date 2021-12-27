@@ -8,13 +8,14 @@ from PyQt5.QtWidgets import (QDialog, QGridLayout, QHBoxLayout, QLabel,
 
 
 class RegisterUser(QDialog):
+    """
+    Класс - диалоговое окно регистрации пользователя на сервере.
+    """
     def __init__(self, database, server):
         super(RegisterUser, self).__init__()
         self.database = database
         self.server = server
-        self.initUI()
 
-    def initUI(self):
         self.setWindowTitle('Регистрация')
 
         self.setFixedSize(400, 180)
@@ -87,4 +88,3 @@ class RegisterUser(QDialog):
             self.messages.information(self, 'Успех', 'Пользователь успешно зарегистрирован.')
             self.server.service_update_lists()
             self.close()
-
