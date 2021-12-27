@@ -53,7 +53,7 @@ class WelcomeWindow(QDialog):
         """
         Метод-обработчик нажатия кнопки 'Войти'.
 
-        :return:
+        :return: ничего не возвращает.
         """
         if self.username_filed.text():
             self.enter_button_pressed = True
