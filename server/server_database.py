@@ -3,11 +3,20 @@ from datetime import datetime
 from sqlalchemy import (Column, DateTime, ForeignKey, Integer, MetaData,
                         String, Table, Text, create_engine)
 from sqlalchemy.orm import mapper, sessionmaker
-from tabulate import tabulate
 
 
 class ServerDatabase:
+    """
+    Класс-оболочка для работы с базой данных сервера.
+    Использует SQLite базу данных, реализован с помощью
+    SQLAlchemy ORM и используется классический подход.
+    """
+
     class AllUsers:
+        """
+        Класс-отображения таблицы пользователей.
+        """
+
         def __init__(self, username, password_hash):
             self.id = None
             self.pubkey = None
@@ -16,6 +25,10 @@ class ServerDatabase:
             self.last_login = datetime.now()
 
     class ActiveUsers:
+        """
+        Класс-отображения таблицы пользователей онлайн.
+        """
+
         def __init__(self, user_id, address, port, login_time):
             self.id = None
             self.user = user_id
@@ -24,6 +37,10 @@ class ServerDatabase:
             self.login_time = login_time
 
     class LoginHistory:
+        """
+        Класс-отображения таблицы истории входа.
+        """
+
         def __init__(self, user, date, address, port):
             self.id = None
             self.user = user
@@ -32,12 +49,20 @@ class ServerDatabase:
             self.port: int = port
 
     class UsersContacts:
+        """
+        Класс-отображения таблицы контактов пользователей.
+        """
+
         def __init__(self, owner, contact):
             self.id = None
             self.owner = owner
             self.contact = contact
 
     class UsersMessagesHistory:
+        """
+        Класс-отображения таблицы статистики сообщений пользователей.
+        """
+
         def __init__(self, user):
             self.id = None
             self.user = user
@@ -101,6 +126,14 @@ class ServerDatabase:
         self.session.commit()
 
     def user_registration(self, username, password_hash):
+        """
+        Метод, вызывающийся при регистрации пользователя. Принимает имя и хеш пароля,
+        создает в БД записи в таблице пользователей и таблице статистики.
+
+        :param username: имя пользователя.
+        :param password_hash: хеш пароля.
+        :return: ничего не возвращает.
+        """
         user_instance = self.AllUsers(username, password_hash)
         self.session.add(user_instance)
         self.session.commit()
@@ -110,6 +143,13 @@ class ServerDatabase:
         self.session.commit()
 
     def remove_user(self, username):
+        """
+        Метод, осуществляющий удаление пользователя из базы данных.
+        Удаляются все записи БД с текущим пользователем.
+
+        :param username: имя пользователя.
+        :return: ничего не возвращается.
+        """
         user = self.session.query(self.AllUsers).filter_by(username=username).first()
         self.session.query(self.ActiveUsers).filter_by(user=user.id).delete()
         self.session.query(self.LoginHistory).filter_by(user=user.id).delete()
@@ -120,7 +160,16 @@ class ServerDatabase:
         self.session.commit()
 
     def user_login(self, username, address, port, key):
+        """
+        Метод, вызывающийся при входе пользователя. Добавляет в базу запись о входе,
+        обновляет открытый ключ пользователя при его изменении.
 
+        :param username: имя пользователя.
+        :param address: адрес, с которого осуществляется подключение.
+        :param port: порт, с которого осуществляется подключение.
+        :param key: открытый ключ пользователя.
+        :return: ничего не возвращает.
+        """
         query = self.session.query(self.AllUsers).filter_by(username=username)
 
         if query.count():
@@ -140,6 +189,14 @@ class ServerDatabase:
         self.session.commit()
 
     def message_exchange(self, sender, receiver):
+        """
+        Метод, осуществляющий изменение счетчика принятых и отправленных сообщений
+        таблицы статистики пользователей при отправке и принятии сообщений пользователями.
+
+        :param sender: отправитель сообщения.
+        :param receiver: получатель сообщения.
+        :return: ничего не возвращает.
+        """
         sender = self.session.query(self.AllUsers).filter_by(username=sender).first().id
         receiver = self.session.query(self.AllUsers).filter_by(username=receiver).first().id
 
@@ -152,6 +209,14 @@ class ServerDatabase:
         self.session.commit()
 
     def add_contact(self, owner, contact):
+        """
+        Метод, осуществляющий добавление в БД записи о добавлении пользователя
+        другим пользователем в контакты.
+
+        :param owner: пользователь, добавляющий контакт.
+        :param contact: пользователь, добавленный в контакты.
+        :return: ничего не возвращает.
+        """
         owner = self.session.query(self.AllUsers).filter_by(username=owner).first()
         contact = self.session.query(self.AllUsers).filter_by(username=contact).first()
 
@@ -165,6 +230,13 @@ class ServerDatabase:
         self.session.commit()
 
     def remove_contact(self, owner, contact):
+        """
+        Метод, осуществляющий удаление из БД записи о наличии контакта.
+
+        :param owner: пользователь, удаляющий контакт.
+        :param contact: пользователь, удаленный из контактов.
+        :return: ничего не возвращает.
+        """
         owner = self.session.query(self.AllUsers).filter_by(username=owner).first()
         contact = self.session.query(self.AllUsers).filter_by(username=contact).first()
 
@@ -179,25 +251,56 @@ class ServerDatabase:
         self.session.commit()
 
     def user_logout(self, username):
+        """
+        Метод, удаляющий из таблицы пользователей онлайн запись при
+        отключения пользователя от сервера.
+
+        :param username: пользователь, отключившийся от сервера
+        :return: ничего не возвращает.
+        """
         user = self.session.query(self.AllUsers).filter_by(username=username).first()
         self.session.query(self.ActiveUsers).filter_by(user=user.id).delete()
         self.session.commit()
 
     def get_hash(self, username):
+        """
+        Метод, возвращающий хеш пароля пользователя.
+
+        :param username: пользователь, чей хеш запрашивается.
+        :return: хеш пароля.
+        """
         user_instance = self.session.query(self.AllUsers).filter_by(username=username).first()
         return user_instance.password_hash
 
     def get_pubkey(self, username):
+        """
+        Метод, возвращающий публичный ключ пользователя.
+
+        :param username: пользователь, чей публичный ключ запрашивается.
+        :return: публичный ключ.
+        """
         user_instance = self.session.query(self.AllUsers).filter_by(username=username).first()
         return user_instance.pubkey
 
     def check_user(self, username):
+        """
+        Метод, осуществляющий проверку регистрации пользователя на сервере.
+
+        :param username: имя пользователя.
+        :return: True или False (в зависимости от результата проверки)
+        """
         if self.session.query(self.AllUsers).filter_by(username=username).count():
             return True
         else:
             return False
 
     def get_contacts(self, owner):
+        """
+        Метод, возвращающий список контактов указанного пользователя.
+
+        :param owner: имя пользователя, чьи контакты запрашиваются.
+        :return: список контактов.
+        """
         owner = self.session.query(self.AllUsers).filter_by(username=owner).one()
 
         contacts = self.session.query(self.UsersContacts, self.AllUsers.username).filter_by(owner=owner.id).join(
@@ -206,6 +309,11 @@ class ServerDatabase:
         return [contact[1] for contact in contacts.all()]
 
     def message_history(self):
+        """
+        Метод, возвращающий статистику сообщений пользователей.
+
+        :return: список кортежей.
+        """
         query = self.session.query(
             self.AllUsers.username,
             self.AllUsers.last_login,
@@ -215,6 +323,11 @@ class ServerDatabase:
         return query.all()
 
     def users_list(self):
+        """
+        Метод, возвращающий список зарегистрированных пользователей.
+
+        :return: список кортежей.
+        """
         query = self.session.query(
             self.AllUsers.username,
             self.AllUsers.last_login,
@@ -222,6 +335,11 @@ class ServerDatabase:
         return query.all()
 
     def active_users_list(self):
+        """
+        Метод, возвращающий список пользователей онлайн.
+
+        :return: список кортежей.
+        """
         query = self.session.query(
             self.AllUsers.username,
             self.ActiveUsers.address,
@@ -231,6 +349,13 @@ class ServerDatabase:
         return query.all()
 
     def login_history(self, username=None):
+        """
+        Метод, возвращающий историю входов (определенного пользователя, если пользователь указан).
+        Если пользователь не указан, возвращает статистику всех пользователей.
+
+        :param username: имя пользователя (опционально).
+        :return: список кортежей.
+        """
         query = self.session.query(
             self.AllUsers.username,
             self.LoginHistory.date,
@@ -240,35 +365,3 @@ class ServerDatabase:
         if username:
             query = query.filter(self.AllUsers.username == username)
         return query.all()
-
-
-if __name__ == '__main__':
-    test_db = ServerDatabase()
-    test_db.user_login('client_1', '192.168.0.10', 8888)
-    test_db.user_login('client_2', '192.168.0.11', 7777)
-    test_db.user_login('client_3', '192.168.0.11', 8888)
-
-    print(tabulate(test_db.active_users_list()))
-
-    test_db.message_exchange('client_1', 'client_3')
-    test_db.message_exchange('client_3', 'client_1')
-    test_db.message_exchange('client_2', 'client_1')
-
-    print(tabulate(test_db.message_history('client_1')))
-    print(tabulate(test_db.message_history('client_2')))
-
-    test_db.add_contact('client_1', 'client_2')
-    test_db.add_contact('client_1', 'client_3')
-
-    print(tabulate(test_db.get_contacts('client_1')))
-
-    test_db.remove_contact('client_1', 'client_3')
-
-    print(tabulate(test_db.get_contacts('client_1')))
-    # test_db.user_logout('client_1')
-    # print(test_db.active_users_list())
-    # print(test_db.login_history('client_1'))
-    #
-    # test_db.user_logout('client_2')
-    # print(test_db.active_users_list())
-    # print(test_db.users_list())
