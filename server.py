@@ -19,7 +19,8 @@ SERVER_LOGGER = logging.getLogger('server')
 @Log()
 def arg_parser(default_port, default_address):
     """
-    Парсер аргументов командной строки.
+    Парсер аргументов командной строки. Возвращает кортеж из 3 элементов -
+    прослушиваемые адреса, прослушиваемый порт, и флаг запуска сервера без GUI.
     :param default_port:
     :param default_address:
     :return:
@@ -39,7 +40,8 @@ def arg_parser(default_port, default_address):
 @Log()
 def load_settings():
     """
-    Парсер ini файла (файла конфигурации).
+    Парсер ini файла (файла конфигурации). Проверяет наличие настроек.
+    При их отсутствии записывает в файл настройки со значениями по умолчанию.
     :return:
     """
     settings = configparser.ConfigParser()
