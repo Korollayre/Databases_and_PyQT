@@ -1,4 +1,3 @@
-"""Утилиты"""
 import json
 
 from common.decos import Log
