@@ -39,9 +39,6 @@ def login_required(func):
     списке авторизованных клиентов.
     За исключением передачи словаря-запроса на авторизацию.
     Если клиент не авторизован, генерирует исключение TypeError
-
-    :param func: декорируемая функция.
-    :return:
     """
     def checker(*args, **kwargs):
         from common.variables import ACTION, PRESENCE
