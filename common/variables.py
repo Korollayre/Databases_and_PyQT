@@ -1,6 +1,8 @@
-"""Константы"""
+"""
+Глобальные переменные проекта
+"""
 
-# Порт поумолчанию для сетевого ваимодействия
+# Порт по умолчанию для сетевого взаимодействия
 import logging
 
 DEFAULT_PORT = 7777
@@ -21,7 +23,7 @@ REMOVE_CONTACT = 'remove'
 ADD_CONTACT = 'add'
 USERS_REQUEST = 'get_users'
 
-# Прококол JIM основные ключи:
+# Протокол JIM основные ключи:
 ACTION = 'action'
 TIME = 'time'
 PORT = 'port'
@@ -40,4 +42,4 @@ PUBLIC_KEY = 'pubkey'
 PRESENCE = 'presence'
 RESPONSE = 'response'
 ERROR = 'error'
-RESPONDEFAULT_IP_ADDRESSSE = 'respondefault_ip_addressse'
+RESPONSE_DEFAULT_IP_ADDRESS = 'response_default_ip_address'

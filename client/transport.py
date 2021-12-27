@@ -8,7 +8,7 @@ import time
 
 from PyQt5.QtCore import QObject, pyqtSignal
 
-from common.errors import ReqFieldMissingError, ServerError
+from common.errors import ServerError
 from common.utils import get_message, send_message
 from common.variables import *
 
@@ -72,7 +72,6 @@ class ClientTransport(threading.Thread, QObject):
                 self.message_205.emit()
             else:
                 CLIENT_LOGGER.error(f'Принят неизвестный код подтверждения {response[RESPONSE]}')
-                raise ReqFieldMissingError(RESPONSE)
 
         elif ACTION in response and response[ACTION] == MESSAGE and SENDER in response \
                 and MESSAGE_TEXT in response and DESTINATION in response and \
