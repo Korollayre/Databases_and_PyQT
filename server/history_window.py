@@ -45,6 +45,7 @@ class HistoryWindow(QDialog):
     def users_history_table_create(self):
         """
         Метод, заполняющий таблицу статистики пользователей данными.
+
         :return: ничего не возвращает.
         """
         history = self.database.message_history()

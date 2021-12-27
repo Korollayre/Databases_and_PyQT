@@ -6,13 +6,15 @@ from PyQt5.QtWidgets import (QDialog, QHBoxLayout, QHeaderView, QLineEdit,
 
 
 class RemoveUser(QDialog):
+    """
+    Класс - диалоговое окно удаления пользователя с сервера.
+    """
+
     def __init__(self, database, server):
         super(RemoveUser, self).__init__()
         self.database = database
         self.server = server
-        self.initUI()
 
-    def initUI(self):
         self.setWindowTitle('Удаление пользователя')
 
         self.messages = QMessageBox()
@@ -44,6 +46,11 @@ class RemoveUser(QDialog):
         self.users_table_create()
 
     def remove_user(self):
+        """
+        Метод, осуществляющий удаление пользователя по двойному нажатию ЛКМ на его имя.
+
+        :return: ничего не возвращает.
+        """
         current_user = self.users_table.currentIndex().data()
         if self.messages.question(self, 'Удаление пользователя',
                                   f'Удалить пользователя {current_user}?', QMessageBox.Yes,
@@ -57,6 +64,11 @@ class RemoveUser(QDialog):
             self.users_table_create()
 
     def users_table_create(self):
+        """
+        Метод, заполняющий таблицу зарегистрированных пользователей данными.
+
+        :return: ничего не возвращает.
+        """
         users = self.database.users_list()
 
         model = QStandardItemModel()
