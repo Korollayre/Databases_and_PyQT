@@ -11,14 +11,18 @@ from server.remove_user import RemoveUser
 
 
 class MainWindow(QMainWindow):
+    """
+    Класс - основное окно серверной части.
+    Основным виджетом окна является таблица пользователей онлайн,
+    которая автоматически обновляется каждую секунду.
+    """
+
     def __init__(self, database, server, settings):
         super().__init__()
         self.database = database
         self.server_thread = server
         self.settings = settings
-        self.initUI()
 
-    def initUI(self):
         exit_action = QAction('Выход', self)
         exit_action.setShortcut('Ctrl+Q')
         exit_action.triggered.connect(qApp.quit)
@@ -78,12 +82,22 @@ class MainWindow(QMainWindow):
         self.show()
 
     def center(self):
+        """
+        Метод, осуществляющий центрирование основного окна.
+
+        :return: ничего не возвращает.
+        """
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
     def active_users_table_create(self):
+        """
+        Метод, заполняющий таблицу пользователей онлайн.
+
+        :return: ничего не возвращает.
+        """
         users_list = self.database.active_users_list()
         model = QStandardItemModel()
         model.setHorizontalHeaderLabels(['Имя пользователя', 'IP-адрес', 'Порт подключения', 'Время подключения', ])
@@ -111,23 +125,42 @@ class MainWindow(QMainWindow):
         self.active_users_table_headers.setSectionResizeMode(2, QHeaderView.Stretch)
         self.active_users_table_headers.setSectionResizeMode(3, QHeaderView.Stretch)
 
-
     def show_history(self):
+        """
+        Метод, вызывающий окно со статистикой клиентов.
+
+        :return: ничего не возвращает.
+        """
         global history_window
         history_window = HistoryWindow(self.database)
         history_window.show()
 
     def show_configuration(self):
+        """
+        Метод, вызывающий окно с настройками сервера.
+
+        :return: ничего не возвращает.
+        """
         global settings_window
         settings_window = ConfigurationWindow(self.settings)
         settings_window.show()
 
     def show_registration(self):
+        """
+        Метод, вызывающий окно регистрации пользователя.
+
+        :return: ничего не возвращает.
+        """
         global registration_window
         registration_window = RegisterUser(self.database, self.server_thread)
         registration_window.show()
 
     def show_removing(self):
+        """
+        Метод, вызывающий окно удаления пользователя.
+
+        :return: ничего не возвращает.
+        """
         global remove_window
         remove_window = RemoveUser(self.database, self.server_thread)
         remove_window.show()
