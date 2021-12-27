@@ -6,12 +6,26 @@ from sqlalchemy.orm import mapper, sessionmaker
 
 
 class ClientDatabase:
+    """
+    Класс-оболочка для работы с базой данных клиента.
+    Использует SQLite базу данных, реализован с помощью
+    SQLAlchemy ORM и используется классический подход.
+    """
+
     class KnownUsers:
+        """
+        Класс-отображения таблицы пользователей.
+        """
+
         def __init__(self, username):
             self.id = None
             self.username = username
 
     class UserMessagesHistory:
+        """
+        Класс-отображение таблицы статистики сообщений.
+        """
+
         def __init__(self, sender, receiver, message):
             self.id = None
             self.sender = sender
@@ -20,6 +34,10 @@ class ClientDatabase:
             self.date = datetime.now()
 
     class UserContacts:
+        """
+        Класс-отображение таблицы контактов.
+        """
+
         def __init__(self, contact):
             self.id = None
             self.contact = contact
@@ -61,6 +79,11 @@ class ClientDatabase:
         self.session.commit()
 
     def init_active_users(self, users_list):
+        """
+        Метод, заполняющий таблицу известных пользователей.
+        :param users_list:
+        :return:
+        """
         self.session.query(self.KnownUsers).delete()
         for user in users_list:
             user_instance = self.KnownUsers(user)
@@ -68,39 +91,80 @@ class ClientDatabase:
         self.session.commit()
 
     def get_active_users(self):
+        """
+        Метод, возвращающий список всех известных пользователей.
+        :return:
+        """
         return [user[0] for user in self.session.query(self.KnownUsers.username).all()]
 
     def check_user_in_active(self, username):
+        """
+        Метод, проверяющий существование пользователя.
+        :param username:
+        :return:
+        """
         if self.session.query(self.KnownUsers).filter_by(username=username).count():
             return True
         else:
             return False
 
     def add_contact(self, contact):
+        """
+        Метод, добавляющий пользователя в базу данных.
+        :param contact:
+        :return:
+        """
         if not self.session.query(self.UserContacts).filter_by(contact=contact).count():
             contact_instance = self.UserContacts(contact)
             self.session.add(contact_instance)
             self.session.commit()
 
     def delete_contact(self, contact):
+        """
+        Метод, удаляющий контакт из базы данных.
+        :param contact:
+        :return:
+        """
         self.session.query(self.UserContacts).filter_by(contact=contact).delete()
         self.session.commit()
 
     def get_user_contacts(self):
+        """
+        Метод, возвращающий список всех контактов пользователя.
+        :return:
+        """
         return [contact[0] for contact in self.session.query(self.UserContacts.contact).all()]
 
     def check_user_contact(self, username):
+        """
+        Метод, проверяющий наличие пользователя в таблице контактов.
+        :param username:
+        :return:
+        """
         if self.session.query(self.UserContacts).filter_by(contact=username).count():
             return True
         else:
             return False
 
     def save_user_message(self, sender, receiver, message):
+        """
+        Метод, сохраняющий сообщение в базу данных.
+        :param sender:
+        :param receiver:
+        :param message:
+        :return:
+        """
         message_instance = self.UserMessagesHistory(sender, receiver, message)
         self.session.add(message_instance)
         self.session.commit()
 
     def get_user_messages_history(self, sender=None, receiver=None):
+        """
+        Метод, возвращающий историю сообщений в соответствии с заданными параметрами.
+        :param sender:
+        :param receiver:
+        :return:
+        """
         query = self.session.query(self.UserMessagesHistory)
         if sender:
             query = query.filter_by(sender=sender)
