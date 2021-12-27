@@ -41,7 +41,7 @@ common.utils. **get_message** (*client*):
         :Результат:
             словарь - сообщение.
 
-common.utils. **send_message** (*sock*,  *message*):
+common.utils. **send_message** (*sock*, *message*):
     Функция отправки словарей через сокет.
     Кодирует словарь в формат JSON и отправляет через сокет.
 

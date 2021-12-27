@@ -13,7 +13,8 @@ Welcome to doc's documentation!
    launcher
    common
    logs
-
+   client
+   server
 
 
 Indices and tables
