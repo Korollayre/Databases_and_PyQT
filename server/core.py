@@ -3,6 +3,9 @@ import hmac
 import os
 import select
 import socket
+
+import logs.server_log_config
+
 from json import JSONDecodeError
 from threading import Thread
 
@@ -16,6 +19,11 @@ SERVER_LOGGER = logging.getLogger('server')
 
 
 class MessageProcessor(Thread, metaclass=ServerVerifier):
+    """
+    Основной класс сервера. Принимает соединения, словари - пакеты
+    от клиентов, обрабатывает поступающие сообщения.
+    Работает в качестве отдельного потока.
+    """
     port = PortVerifier()
     address = AddressVerifier()
 
@@ -34,6 +42,11 @@ class MessageProcessor(Thread, metaclass=ServerVerifier):
         self.running = True
 
     def init_socket(self):
+        """
+        Метод, инициализирующий сокет.
+
+        :return: ничего не возвращает.
+        """
         SERVER_LOGGER.info(f'Сервер запущен. Порт для подключения: {self.listen_port}, адрес: {self.listen_address}. '
                            f'При отсутствии адреса сервер принимает соединения со любых адресов')
 
@@ -77,6 +90,14 @@ class MessageProcessor(Thread, metaclass=ServerVerifier):
                         self.remove_user(sender)
 
     def remove_user(self, username):
+        """
+        Метод, обрабатывающий разрыв соединения с пользователем.
+        Перебирает список пользователей онлайн, находит указанного клиента,
+        и удаляет его из таблицы пользователей онлайн.
+
+        :param username: пользователь, с которым произошел разрыв соединения.
+        :return: ничего не возвращает.
+        """
         SERVER_LOGGER.info(f'Соединение с {username.getpeername()} разорвано.')
         for name in self.names:
             if self.names[name] == username:
@@ -88,6 +109,13 @@ class MessageProcessor(Thread, metaclass=ServerVerifier):
 
     @login_required
     def process_user_message(self, message, user):
+        """
+        Метод, обрабатывающий поступающие сообщения от клиентов.
+
+        :param message: сообщение.
+        :param user: объект-socket клиента.
+        :return: ничего не возвращает.
+        """
         SERVER_LOGGER.info(f'Разбор сообщения {message}.')
         if ACTION in message and message[ACTION] == PRESENCE and TIME in message and USER in message:
             self.user_authorization(message, user)
@@ -172,6 +200,12 @@ class MessageProcessor(Thread, metaclass=ServerVerifier):
             return
 
     def process_message(self, message):
+        """
+        Метод, отправляющий сообщение клиенту.
+
+        :param message: сообщение.
+        :return: ничего не возвращает.
+        """
         if message[DESTINATION] in self.names and self.names[message[DESTINATION]] in self.send_sockets_list:
             try:
                 send_message(self.names[message[DESTINATION]], message)
@@ -189,6 +223,13 @@ class MessageProcessor(Thread, metaclass=ServerVerifier):
                 f'Пользователь {message[DESTINATION]} не зарегистрирован. Отправка сообщения невозможна.')
 
     def user_authorization(self, message, user_sock):
+        """
+        Метод, осуществляющий авторизацию пользователей.
+
+        :param message: запрос на авторизацию.
+        :param user_sock: объект-socket клиента.
+        :return: ничего не возвращает.
+        """
         if message[USER][ACCOUNT_NAME] in self.names.keys():
             try:
                 SERVER_LOGGER.info('Попытка авторизации авторизованного клиента. Закрытие соединения.')
@@ -249,6 +290,11 @@ class MessageProcessor(Thread, metaclass=ServerVerifier):
                 user_sock.close()
 
     def service_update_lists(self):
+        """
+        Метод, осуществляющий отправку клиентам команду для запуска процесса обновления баз данных.
+
+        :return: ничего не возвращает.
+        """
         for user in self.names:
             try:
                 send_message(self.names[user], {RESPONSE: 205})
