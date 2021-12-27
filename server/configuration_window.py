@@ -3,12 +3,13 @@ from PyQt5.QtWidgets import (QDialog, QFileDialog, QGridLayout, QLabel,
 
 
 class ConfigurationWindow(QDialog):
+    """
+    Класс - диалоговое окно настроек сервера.
+    """
     def __init__(self, settings):
         super().__init__()
         self.settings = settings
-        self.initUI()
 
-    def initUI(self):
         self.setFixedSize(self.sizeHint())
         self.setWindowTitle('Настройки сервера')
 
@@ -65,6 +66,11 @@ class ConfigurationWindow(QDialog):
         self.address.insert(self.settings['SETTINGS']['Listen_address'])
 
     def open_file_dialog(self):
+        """
+        Метод-обработчик открытия окна выбора папки.
+
+        :return: ничего не возвращает.
+        """
         dialog = QFileDialog(self)
         path = dialog.getExistingDirectory()
         path = path.replace('/', '\\')
@@ -72,6 +78,13 @@ class ConfigurationWindow(QDialog):
         self.db_path.insert(path)
 
     def save_server_settings(self):
+        """
+        Метод, сохраняющий настройки сервера.
+        Проверяет правильность введенных данных, и при корректности данных
+        сохраняет их в server.ini файл серверной папки.
+
+        :return: ничего не возвращает.
+        """
         message = QMessageBox()
         self.settings['SETTINGS']['Database_path'] = self.db_path.text()
         self.settings['SETTINGS']['Database_file'] = self.db_file.text()
