@@ -294,6 +294,7 @@ class ClientTransport(threading.Thread, QObject):
     def run(self):
         """
         Метод, содержащий основной цикл работы класса.
+
         :return:
         """
         CLIENT_LOGGER.info('Запущен процесс-приёмник сообщений сервера.')
