@@ -1,3 +1,7 @@
+"""
+Файл конфигурации клиентского логгера.
+"""
+
 import logging
 import os
 import sys
