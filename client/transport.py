@@ -12,12 +12,17 @@ from common.errors import ReqFieldMissingError, ServerError
 from common.utils import get_message, send_message
 from common.variables import *
 
+import logs.client_log_config
+
 CLIENT_LOGGER = logging.getLogger('client')
 
 sock_lock = threading.Lock()
 
 
 class ClientTransport(threading.Thread, QObject):
+    """
+    Класс, отвечающий за взаимодействие с сервером.
+    """
     new_message_signal = pyqtSignal(dict)
     message_205 = pyqtSignal()
     connection_lost_signal = pyqtSignal()
@@ -49,6 +54,12 @@ class ClientTransport(threading.Thread, QObject):
         self.running = True
 
     def parsing_server_response(self, response):
+        """
+        Метод, обрабатывающий сообщения сервера.
+
+        :param response: сообщение сервера.
+        :return:
+        """
         CLIENT_LOGGER.info(f'Принят ответ сервера')
         if RESPONSE in response:
             if response[RESPONSE] == 200:
@@ -70,6 +81,14 @@ class ClientTransport(threading.Thread, QObject):
             self.new_message_signal.emit(response)
 
     def connection_init(self, port, address):
+        """
+        Метод, осуществляющий соединение с сервером и
+        отправку запроса авторизации пользователя на сервере.
+
+        :param port: порт подключения.
+        :param address: адрес подключения.
+        :return:
+        """
         connected = False
 
         self.transport = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -135,6 +154,11 @@ class ClientTransport(threading.Thread, QObject):
         CLIENT_LOGGER.info('Соединение с сервером установлено.')
 
     def users_list_request(self):
+        """
+        Метод, обновляющий с сервера список пользователей онлайн.
+
+        :return:
+        """
         CLIENT_LOGGER.info(f'Запрос активных пользователей пользователем {self.username}')
         request = {
             ACTION: USERS_REQUEST,
@@ -150,6 +174,11 @@ class ClientTransport(threading.Thread, QObject):
             CLIENT_LOGGER.error('Не удалось обновить список активных пользователей.')
 
     def contacts_list_request(self):
+        """
+        Метод, обновляющий с сервера список контактов.
+
+        :return:
+        """
         CLIENT_LOGGER.info(f'Запрос списка контактов пользователем {self.username}')
         request = {
             ACTION: GET_CONTACTS,
@@ -166,6 +195,11 @@ class ClientTransport(threading.Thread, QObject):
             CLIENT_LOGGER.error(f'Не удалось обновить список контактов пользователя {self.username}.')
 
     def add_contact_to_server(self, user):
+        """
+        Метод, отправляющий на сервер сведения о добавления контакта.
+        :param user: пользователь, добавленный в список контактов.
+        :return:
+        """
         CLIENT_LOGGER.info(f'Запрос на добавление в контакты пользователя {user} пользователем {self.username}')
         request = {
             ACTION: ADD_CONTACT,
@@ -178,6 +212,11 @@ class ClientTransport(threading.Thread, QObject):
             self.parsing_server_response(get_message(self.transport))
 
     def remove_contact_from_server(self, contact):
+        """
+        Метод, отправляющий на сервер сведения об удалении пользователя из списка контактов.
+        :param contact: пользователь, удаленный из списка контактов.
+        :return:
+        """
         CLIENT_LOGGER.info(
             f'Запрос на удаление пользователя {contact} из списка контактов пользователем {self.username}')
         request = {
@@ -191,6 +230,13 @@ class ClientTransport(threading.Thread, QObject):
             self.parsing_server_response(get_message(self.transport))
 
     def create_user_message(self, receiver, message):
+        """
+        Метод, отправляющий на сервер сообщение для определенного пользователя.
+
+        :param receiver: получатель сообщения.
+        :param message: сообщение.
+        :return:
+        """
         user_message = {
             ACTION: MESSAGE,
             SENDER: self.username,
@@ -206,6 +252,12 @@ class ClientTransport(threading.Thread, QObject):
             CLIENT_LOGGER.info(f'Сообщение {user_message} пользователю {receiver} отправлено.')
 
     def user_key_request(self, username):
+        """
+        Метод, запрашивающий с сервера публичный ключ пользователя.
+
+        :param username: пользователь, чей публичный ключ запрашивается.
+        :return:
+        """
         CLIENT_LOGGER.info(f'Запрос публичного ключа пользователя {username}')
         request = {
             ACTION: PUBLIC_KEY_REQUEST,
@@ -221,6 +273,10 @@ class ClientTransport(threading.Thread, QObject):
             CLIENT_LOGGER.error(f'Не удалось получить публичный ключ пользователя {username}.')
 
     def transport_shutdown(self):
+        """
+        Метод, отправляющий серверу сведения о завершение работы клиентского приложения.
+        :return:
+        """
         self.running = False
         message = {
             ACTION: EXIT,
@@ -236,6 +292,10 @@ class ClientTransport(threading.Thread, QObject):
         time.sleep(0.5)
 
     def run(self):
+        """
+        Метод, содержащий основной цикл работы класса.
+        :return:
+        """
         CLIENT_LOGGER.info('Запущен процесс-приёмник сообщений сервера.')
         while self.running:
             time.sleep(1)
