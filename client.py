@@ -2,6 +2,8 @@ import argparse
 import os
 import sys
 
+import logs.client_log_config
+
 from Cryptodome.PublicKey import RSA
 from PyQt5.QtWidgets import QApplication, QMessageBox
 
@@ -23,7 +25,7 @@ def arg_parser():
     адрес и порт сервера, имя пользователя, и пароль.
     Выполняет проверку корректности указанного значения порта.
 
-    :return:
+    :return: ничего не возвращает.
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('port', default=DEFAULT_PORT, type=int, nargs='?')
@@ -51,7 +53,7 @@ def main():
     При отсутствии имени пользователя и(или) пароля запрашивает их у пользователя.
     Генерирует открытый ключ, осуществляет запуск клиентского GUI.
 
-    :return:
+    :return: ничего не возвращает.
     """
     request_address, request_port, request_name, request_password = arg_parser()
 
