@@ -2,6 +2,8 @@ import base64
 import json
 import logging
 
+import logs.client_log_config
+
 from Cryptodome.Cipher import PKCS1_OAEP
 from Cryptodome.PublicKey import RSA
 from PyQt5.QtCore import QEvent, QSortFilterProxyModel, Qt, pyqtSlot
@@ -12,7 +14,6 @@ from client.main_window_conv import Ui_MainClientWindow
 from common.errors import ServerError
 from common.variables import MESSAGE_TEXT, SENDER
 
-import logs.client_log_config
 
 CLIENT_LOGGER = logging.getLogger('client')
 
@@ -73,7 +74,7 @@ class MainWindow(QMainWindow):
 
         :param source: объект, на котором произошло событие.
         :param event: само событие.
-        :return:
+        :return: ничего не возвращает.
         """
         menu = QMenu(self)
 
@@ -114,7 +115,7 @@ class MainWindow(QMainWindow):
         """
         Метод, деактивирующий поле ввода и кнопку отправки сообщения.
 
-        :return:
+        :return: ничего не возвращает.
         """
         self.ui.message_input.clear()
         self.ui.message_input.setPlaceholderText('Выберите пользователя для диалога')
@@ -133,7 +134,7 @@ class MainWindow(QMainWindow):
         """
         Метод, заполняющий соответствующий QListView историей переписки с текущим собеседником.
 
-        :return:
+        :return: ничего не возвращает.
         """
         input_messages = self.database.get_user_messages_history(sender=self.transport.username,
                                                                  receiver=self.current_chat)
@@ -180,7 +181,7 @@ class MainWindow(QMainWindow):
         Метод, обрабатывающий двойное нажатие ЛКМ по пользователю в списке контактов
         или в списке пользователей онлайн.
 
-        :return:
+        :return: ничего не возвращает.
         """
         if self.ui.users_list.currentIndex().data():
             self.current_chat = self.ui.users_list.currentIndex().data()
@@ -193,7 +194,7 @@ class MainWindow(QMainWindow):
         """
         Метод, активирующий чат с собеседником
 
-        :return:
+        :return: ничего не возвращает.
         """
         try:
             self.current_chat_key = self.transport.user_key_request(self.current_chat)
@@ -220,7 +221,7 @@ class MainWindow(QMainWindow):
         """
         Метод, обновляющий список пользователей онлайн.
 
-        :return:
+        :return: ничего не возвращает.
         """
         self.transport.users_list_request()
         users_list = self.database.get_active_users()
@@ -245,7 +246,7 @@ class MainWindow(QMainWindow):
         """
         Метод, обновляющий список контактов.
 
-        :return:
+        :return: ничего не возвращает.
         """
         self.transport.contacts_list_request()
         contacts_list = self.database.get_user_contacts()
@@ -274,7 +275,7 @@ class MainWindow(QMainWindow):
         После добавления пользователя в список контактов обновляет список контактов.
 
         :param username: Имя пользователя, которого необходимо добавить в контакты.
-        :return:
+        :return: ничего не возвращает.
         """
         try:
             self.transport.add_contact_to_server(username)
@@ -302,7 +303,7 @@ class MainWindow(QMainWindow):
         После удаления пользователя из списка контактов обновляет список контактов.
 
         :param contact: Имя контакта, которого необходимо удалить из списка контактов.
-        :return:
+        :return: ничего не возвращает.
         """
         try:
             self.transport.remove_contact_from_server(contact)
@@ -324,7 +325,8 @@ class MainWindow(QMainWindow):
         """
         Функция отправки сообщения текущему собеседнику.
         Реализует шифрование сообщения и его отправку.
-        :return:
+
+        :return: ничего не возвращает.
         """
         message_text = self.ui.message_input.toPlainText()
         self.ui.message_input.clear()
@@ -358,7 +360,7 @@ class MainWindow(QMainWindow):
         если сообщение пришло не от текущего собеседника.
 
         :param message: принятое сообщение.
-        :return:
+        :return: ничего не возвращает.
         """
         encrypted_message = base64.b64decode(message[MESSAGE_TEXT])
         try:
@@ -385,7 +387,7 @@ class MainWindow(QMainWindow):
         Открывает окно с предупреждением о потере соединения
         и завершает работу приложения.
 
-        :return:
+        :return: ничего не возвращает.
         """
         self.messages.warning(self, 'Сбой соединения', 'Потеряно соединение с сервером. ')
         self.close()
@@ -395,7 +397,7 @@ class MainWindow(QMainWindow):
         """
         Слот-обработчик обновления баз данных по команде сервера.
 
-        :return:
+        :return: ничего не возвращает.
         """
         if self.current_chat and not self.database.check_user_in_active(self.current_chat):
             self.messages.warning(self, 'Ошибка', 'Пользователь не найден.')
@@ -409,7 +411,7 @@ class MainWindow(QMainWindow):
         Метод, соединяющий сигналы и слоты.
 
         :param trans_obj: объект-transport
-        :return:
+        :return: ничего не возвращает.
         """
         trans_obj.new_message_signal.connect(self.message_receive)
         trans_obj.connection_lost_signal.connect(self.connection_lost)
