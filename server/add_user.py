@@ -11,6 +11,7 @@ class RegisterUser(QDialog):
     """
     Класс - диалоговое окно регистрации пользователя на сервере.
     """
+
     def __init__(self, database, server):
         super(RegisterUser, self).__init__()
         self.database = database
@@ -68,17 +69,20 @@ class RegisterUser(QDialog):
         self.setLayout(main_layout)
 
     def registration(self):
+        """
+        Метод, проверяющий корректности введенных данных,
+        и осуществляющий регистрацию пользователя.
+
+        :return: ничего не возвращает.
+        """
         if not self.username.text():
-            self.messages.critical(
-                self, 'Ошибка', 'Не указано имя пользователя.')
+            self.messages.critical(self, 'Ошибка', 'Не указано имя пользователя.')
             return
         elif self.password.text() != self.confirm.text():
-            self.messages.critical(
-                self, 'Ошибка', 'Введённые пароли не совпадают.')
+            self.messages.critical(self, 'Ошибка', 'Введённые пароли не совпадают.')
             return
         elif self.database.check_user(self.username.text()):
-            self.messages.critical(
-                self, 'Ошибка', 'Пользователь уже существует.')
+            self.messages.critical(self, 'Ошибка', 'Пользователь уже существует.')
             return
         else:
             password_bytes = self.password.text().encode('utf-8')
