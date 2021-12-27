@@ -4,6 +4,8 @@ import configparser
 import os
 import sys
 
+import logs.server_log_config
+
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication
 
@@ -19,12 +21,11 @@ SERVER_LOGGER = logging.getLogger('server')
 @Log()
 def arg_parser(default_port, default_address):
     """
-    Парсер аргументов командной строки. Возвращает кортеж из 3 элементов -
-    прослушиваемые адреса, прослушиваемый порт, и флаг запуска сервера без GUI.
+    Парсер аргументов командной строки.
 
     :param default_port: Значение прослушиваемого порта по умолчанию.
     :param default_address: Значение прослушиваемых адресов по умолчанию.
-    :return:
+    :return: кортеж из 3 элементов - прослушиваемые адреса, прослушиваемый порт, и флаг запуска сервера без GUI.
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', default=default_port, type=int, nargs='?')
@@ -44,7 +45,7 @@ def load_settings():
     Парсер ini файла (файла конфигурации). Проверяет наличие настроек.
     При их отсутствии записывает в файл настройки со значениями по умолчанию.
 
-    :return:
+    :return: файл конфигурации.
     """
     settings = configparser.ConfigParser()
     dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -65,7 +66,7 @@ def main():
     Основная функция серверной части.
     Загружает параметры командной строки и ini файла, и осуществляет запуск сервера.
 
-    :return:
+    :return: ничего не возвращает.
     """
     settings = load_settings()
 
