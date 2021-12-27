@@ -18,6 +18,12 @@ CLIENT_LOGGER = logging.getLogger('client')
 
 @Log()
 def arg_parser():
+    """
+    Парсер аргументов командной строки. Возвращает кортеж из 4 элементов -
+    адрес и порт сервера, имя пользователя, и пароль.
+    Выполняет проверку корректности указанного значения порта.
+    :return:
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('port', default=DEFAULT_PORT, type=int, nargs='?')
     parser.add_argument('addr', default=DEFAULT_IP_ADDRESS, nargs='?')
@@ -38,6 +44,13 @@ def arg_parser():
 
 
 def main():
+    """
+    Основная функция клиентской части.
+    Загружает и проверяет параметры командной строки.
+    При отсутствии имени пользователя и(или) пароля запрашивает их у пользователя.
+    Генерирует открытый ключ, осуществляет запуск клиентского GUI.
+    :return:
+    """
     request_address, request_port, request_name, request_password = arg_parser()
 
     app = QApplication(sys.argv)
