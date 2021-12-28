@@ -2,8 +2,6 @@ import base64
 import json
 import logging
 
-import logs.client_log_config
-
 from Cryptodome.Cipher import PKCS1_OAEP
 from Cryptodome.PublicKey import RSA
 from PyQt5.QtCore import QEvent, QSortFilterProxyModel, Qt, pyqtSlot

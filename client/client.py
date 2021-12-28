@@ -2,10 +2,10 @@ import argparse
 import os
 import sys
 
-import logs.client_log_config
-
 from Cryptodome.PublicKey import RSA
 from PyQt5.QtWidgets import QApplication, QMessageBox
+
+import logs.client_log_config
 
 from client.client_database import ClientDatabase
 from client.main_window import MainWindow
@@ -73,7 +73,7 @@ def main():
                            f'адрес - {request_address}, порт - {request_port}, имя - {request_name}')
 
         dir_path = os.getcwd() + '\\client'
-        key_file = os.path.join(dir_path, f'{request_name}.key')
+        key_file = os.path.join(dir_path, f'client/{request_name}.key')
         if not os.path.exists(key_file):
             keys = RSA.generate(2048, os.urandom)
             with open(key_file, 'wb') as key:

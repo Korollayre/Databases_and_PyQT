@@ -1,5 +1,6 @@
 import binascii
 import hmac
+import logging
 import os
 import select
 import socket

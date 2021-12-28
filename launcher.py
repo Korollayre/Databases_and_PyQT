@@ -33,20 +33,20 @@ def main():
     venv_path = '../venv/Scripts/python'
     clients_online = False
     while True:
-        command = input("Для запуска сервера и клиентов введите 's', для выхода - 'q', для закрытия всех окон 'x': ")
+        command = input("Для запуска сервера введите 's', для запуска клиентов введите 'k', для выхода - 'q', для закрытия всех окон 'x': ")
 
         if command == 'q':
             break
         elif command == 's':
             process.append(
-                subprocess.Popen(f'{venv_path} server.py', creationflags=subprocess.CREATE_NO_WINDOW))
+                subprocess.Popen(f'{venv_path} server/server.py', creationflags=subprocess.CREATE_NO_WINDOW))
         elif command == 'k':
             if not clients_online:
                 for i in range(3):
                     process.append(
-                        subprocess.Popen(f'{venv_path} client.py -n test{i + 1} -p password',
+                        subprocess.Popen(f'{venv_path} client/client.py -n test{i + 1} -p password',
                                          creationflags=subprocess.CREATE_NO_WINDOW))
-                    clients_online = True
+                clients_online = True
             else:
                 print('Клиенты уже запущены.')
 

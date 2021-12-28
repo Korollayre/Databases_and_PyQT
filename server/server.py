@@ -4,10 +4,10 @@ import configparser
 import os
 import sys
 
-import logs.server_log_config
-
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication
+
+import logs.server_log_config
 
 from common.decos import Log
 from common.variables import *
