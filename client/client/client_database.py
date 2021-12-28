@@ -44,7 +44,7 @@ class ClientDatabase:
             self.contact = contact
 
     def __init__(self, username):
-        self.database_engine = create_engine(f'sqlite:///client/client/{username}.db3', echo=False, pool_recycle=3600,
+        self.database_engine = create_engine(f'sqlite:///client/{username}.db3', echo=False, pool_recycle=3600,
                                              connect_args={'check_same_thread': False})
 
         self.metadata = MetaData()

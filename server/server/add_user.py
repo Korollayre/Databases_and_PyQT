@@ -87,7 +87,7 @@ class RegisterUser(QDialog):
         else:
             password_bytes = self.password.text().encode('utf-8')
             salt = self.username.text().lower().encode('utf-8')
-            password_hash = hashlib.pbkdf2_hmac('sha512', password_bytes, salt, 10000)
+            password_hash = hashlib.pbkdf2_hmac('sha256', password_bytes, salt, 100000)
             self.database.user_registration(self.username.text(), binascii.hexlify(password_hash))
             self.messages.information(self, 'Успех', 'Пользователь успешно зарегистрирован.')
             self.server.service_update_lists()

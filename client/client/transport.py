@@ -112,7 +112,7 @@ class ClientTransport(threading.Thread, QObject):
 
         password_bytes = self.password.encode('utf-8')
         salt = self.username.lower().encode('utf-8')
-        password_hash = hashlib.pbkdf2_hmac('sha512', password_bytes, salt, 10000)
+        password_hash = hashlib.pbkdf2_hmac('sha256', password_bytes, salt, 100000)
         password_hash_string = binascii.hexlify(password_hash)
 
         CLIENT_LOGGER.info(f'Создан хеш - {password_hash_string}')
