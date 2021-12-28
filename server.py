@@ -48,7 +48,7 @@ def load_settings():
     :return: файл конфигурации.
     """
     settings = configparser.ConfigParser()
-    dir_path = os.path.dirname(os.path.realpath(__file__))
+    dir_path = os.getcwd()
     settings.read(f'{dir_path}/server/server.ini')
     if 'SETTINGS' in settings:
         return settings

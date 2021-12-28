@@ -13,7 +13,7 @@ LOGGER = logging.getLogger('server')
 
 FORMAT = logging.Formatter('%(asctime)s %(levelname)-10s %(module)s %(message)s')
 
-PATH = os.path.dirname(os.path.abspath(__file__))
+PATH = os.getcwd()
 PATH = os.path.join(PATH, 'data/server.log')
 
 STREAM_HANDLER = logging.StreamHandler(sys.stderr)
