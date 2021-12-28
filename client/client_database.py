@@ -3,6 +3,7 @@ from datetime import datetime
 from sqlalchemy import (Column, DateTime, Integer, MetaData, String, Table,
                         Text, create_engine)
 from sqlalchemy.orm import mapper, sessionmaker
+from sqlalchemy.sql import default_comparator
 
 
 class ClientDatabase:
