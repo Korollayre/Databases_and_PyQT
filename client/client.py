@@ -72,7 +72,7 @@ def main():
         CLIENT_LOGGER.info(f'Запущен клиент со следующими параметрами: '
                            f'адрес - {request_address}, порт - {request_port}, имя - {request_name}')
 
-        dir_path = os.getcwd() + '\\client'
+        dir_path = os.getcwd()
         key_file = os.path.join(dir_path, f'{request_name}.key')
         if not os.path.exists(key_file):
             keys = RSA.generate(2048, os.urandom)
